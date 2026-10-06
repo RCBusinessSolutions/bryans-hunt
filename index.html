@@ -1,1 +1,1825 @@
-<!-- placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bryan's Hunt — Osage County</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --bg:        #faf7f2;
+  --bg2:       #f4ede0;
+  --bg3:       #ece0cc;
+  --bg4:       #e2d0b4;
+  --border:    #d8cbb8;
+  --border2:   #c8b898;
+  --green:     #4a7820;
+  --green-dim: #c8e0a8;
+  --amber:     #c05c10;
+  --amber-dim: #f0d8b0;
+  --red:       #b82a10;
+  --blue:      #2a60a8;
+  --text:      #2c1e0e;
+  --text-dim:  #8c7860;
+  --text-mid:  #5a4030;
+  --text-bright:#160e06;
+  --hunt:      #3a6818;
+  --marginal:  #b85810;
+  --skip:      #b82010;
+  --p-drop:    #c84010;
+  --p-rise:    #3a6818;
+  --safe-top:  env(safe-area-inset-top, 0px);
+  --safe-bot:  env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  height: 100%; background: var(--bg); color: var(--text);
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 16px;
+  padding-top: var(--safe-top); padding-bottom: calc(var(--safe-bot) + 32px);
+  -webkit-text-size-adjust: 100%;
+}
+
+/*  HUNTER MODAL  */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 100;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.hidden { display: none; }
+.modal-box {
+  background: #fff; border: 1px solid var(--border2); border-radius: 12px;
+  padding: 28px 24px; max-width: 380px; width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,.25);
+}
+.modal-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 700;
+  color: var(--amber); margin-bottom: 6px;
+}
+.modal-sub {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+  color: var(--text-dim); margin-bottom: 20px;
+}
+.hunter-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;
+}
+.hunter-btn {
+  background: var(--bg3); border: 1.5px solid var(--border2); border-radius: 8px;
+  padding: 16px 10px; cursor: pointer; text-align: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 700;
+  color: var(--text-bright); transition: border-color .15s, background .15s, box-shadow .15s;
+  box-shadow: 0 1px 4px rgba(44,30,14,.10);
+}
+.hunter-btn:hover { border-color: var(--amber); background: var(--amber-dim); color: var(--amber); }
+.hunter-btn .hunter-initials, .hunter-btn .hunter-icon { font-size: .75rem; display: block; margin-bottom: 5px; color: var(--amber); font-family: 'JetBrains Mono', monospace; letter-spacing: .08em; font-weight: 700; }
+.hunter-btn:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.modal-divider {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+  color: var(--text-dim); text-align: center; margin: 12px 0; letter-spacing: .1em;
+}
+.modal-input-row { display: flex; gap: 8px; }
+.modal-input {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px;
+  padding: 10px 12px; color: var(--text-bright);
+  font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+}
+.modal-input::placeholder { color: var(--text-dim); }
+.btn-add {
+  background: var(--amber-dim); border: 1px solid var(--amber); border-radius: 6px;
+  padding: 10px 14px; cursor: pointer; color: var(--amber);
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700;
+}
+.btn-add:hover { background: var(--amber); color: var(--bg); }
+
+/*  HEADER  */
+header {
+  background: var(--bg2); border-bottom: 2px solid var(--border);
+  padding: 12px 16px 10px; position: sticky; top: var(--safe-top);
+  z-index: 20; display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 2px 8px rgba(44,30,14,.10);
+}
+.header-badge {
+  width: 36px; height: 36px; background: var(--amber); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-family: 'Cormorant Garamond', serif; font-size: .75rem; font-weight: 700;
+  color: #fff; letter-spacing: .04em;
+}
+.header-text h1 {
+  font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700;
+  color: var(--amber); letter-spacing: .06em; text-transform: uppercase; line-height: 1.1;
+}
+.header-text p {
+  font-family: 'JetBrains Mono', monospace; font-size: .62rem;
+  color: var(--text-dim); margin-top: 2px; letter-spacing: .04em;
+}
+.header-hunter {
+  margin-left: auto; background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 6px 12px; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+  color: var(--amber); white-space: nowrap;
+}
+.header-hunter:hover { border-color: var(--amber); }
+
+/*  TAB NAV  */
+.tab-nav {
+  display: flex; background: var(--bg2); border-bottom: 2px solid var(--border);
+  position: sticky; top: calc(var(--safe-top) + 60px); z-index: 19;
+  overflow-x: auto; scrollbar-width: none;
+  box-shadow: 0 2px 8px rgba(44,30,14,.08);
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-nav-btn {
+  flex: 0 0 auto; padding: 10px 14px; background: none; border: none;
+  border-bottom: 2px solid transparent; color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace; font-size: .65rem;
+  text-transform: uppercase; letter-spacing: .08em; cursor: pointer;
+  transition: color .15s, border-color .15s; white-space: nowrap;
+}
+.tab-nav-btn.active { color: var(--amber); border-bottom-color: var(--amber); }
+
+/*  DAY STRIP  */
+.week-strip {
+  display: flex; overflow-x: auto; padding: 10px 12px; gap: 8px;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  scrollbar-width: none; position: sticky;
+  top: calc(var(--safe-top) + 100px); z-index: 18;
+}
+.week-strip::-webkit-scrollbar { display: none; }
+.day-tab {
+  flex: 0 0 auto; min-width: 54px; padding: 8px 8px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--bg3); cursor: pointer;
+  text-align: center; transition: border-color .15s, background .15s;
+}
+.day-tab.active { border-color: var(--amber); background: var(--bg4); }
+.day-tab .dow { font-family: 'JetBrains Mono', monospace; font-size: .58rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }
+.day-tab .date-num { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--text-bright); margin: 1px 0; line-height: 1; }
+.day-tab .tab-score { font-family: 'JetBrains Mono', monospace; font-size: .65rem; font-weight: 700; }
+.tab-score.hunt     { color: var(--hunt); }
+.tab-score.marginal { color: var(--marginal); }
+.tab-score.skip     { color: var(--skip); }
+.tab-alert { font-size: .68rem; margin-top: 2px; line-height: 1; }
+@keyframes pulse-icon { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.2)} }
+.tab-alert.hot { animation: pulse-icon 1.4s ease-in-out infinite; }
+
+/*  MAIN CONTENT  */
+.main-view { padding: 14px 12px; max-width: 600px; margin: 0 auto; background: var(--bg); position: relative; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/*  ALERT BANNERS  */
+.alert-banner {
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;
+  font-family: 'JetBrains Mono', monospace; font-size: .72rem; line-height: 1.55;
+}
+.alert-banner.pressure { background: rgba(224,90,32,.1); border: 1px solid rgba(224,90,32,.35); color: var(--p-drop); }
+.alert-banner.vacuum   { background: rgba(122,182,72,.08); border: 1px solid rgba(122,182,72,.3); color: var(--hunt); }
+.alert-banner.weather  { background: rgba(200,146,42,.08); border: 1px solid rgba(200,146,42,.3); color: var(--amber); }
+
+/*  RUT BANNER  */
+.rut-banner {
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 16px; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.rut-icon { flex-shrink: 0; }
+.rut-info { flex: 1; min-width: 0; }
+.rut-phase-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; color: var(--amber); line-height: 1.1; }
+.rut-phase-sub  { font-family: 'JetBrains Mono', monospace; font-size: .63rem; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
+.rut-next       { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--text-dim); text-align: right; flex-shrink: 0; max-width: 130px; line-height: 1.4; }
+
+/*  SESSION CARDS  */
+.session-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+.session-header { padding: 12px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--border); }
+.session-label { font-family: 'JetBrains Mono', monospace; font-size: .63rem; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); margin-bottom: 4px; }
+.score-block { text-align: right; }
+.score-num { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 700; line-height: 1; }
+.score-num.hunt     { color: var(--hunt); }
+.score-num.marginal { color: var(--marginal); }
+.score-num.skip     { color: var(--skip); }
+.score-label { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--text-dim); letter-spacing: .06em; text-align: right; }
+.verdict-text { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; }
+.verdict-sub  { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--text-mid); margin-top: 4px; line-height: 1.5; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); }
+.stat-cell { background: var(--bg2); padding: 10px 12px; }
+.stat-lbl { font-family: 'JetBrains Mono', monospace; font-size: .58rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 3px; }
+.stat-val { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 600; color: var(--text-bright); line-height: 1; }
+.stat-sub { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--text-dim); margin-top: 2px; }
+
+/*  MOON / SOLUNAR  */
+.moon-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 16px; border-top: 1px solid var(--border);
+}
+.moon-svg-wrap { flex-shrink: 0; }
+.moon-info { flex: 1; }
+.moon-phase-name { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 700; color: var(--text-bright); }
+.moon-phase-pct  { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--text-dim); margin-top: 2px; }
+.solunar-row {
+  padding: 10px 16px 12px; border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+}
+.solunar-lbl { font-size: .62rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.solunar-periods { display: flex; flex-wrap: wrap; gap: 6px; }
+.solunar-chip {
+  font-size: .65rem; padding: 4px 8px; border-radius: 4px; line-height: 1.4;
+}
+.solunar-chip.major { background: rgba(200,146,42,.15); border: 1px solid rgba(200,146,42,.4); color: var(--amber); }
+.solunar-chip.minor { background: rgba(122,182,72,.08); border: 1px solid rgba(122,182,72,.3); color: var(--hunt); }
+.sunrise-row {
+  display: flex; gap: 16px; padding: 8px 16px 12px; border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace; font-size: .68rem;
+}
+.sunrise-item { display: flex; align-items: center; gap: 6px; }
+.sunrise-item span { color: var(--text-dim); }
+.sunrise-item strong { color: var(--amber); }
+
+/*  WIND COMPASS  */
+.wind-compass-wrap {
+  padding: 10px 16px 14px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 16px;
+}
+.wind-compass-info { font-family: 'JetBrains Mono', monospace; font-size: .65rem; }
+.wind-compat { margin-top: 4px; font-size: .62rem; }
+.wind-compat.good  { color: var(--hunt); }
+.wind-compat.bad   { color: var(--skip); }
+
+/*  HUNT LOG  */
+.log-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.log-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; color: var(--amber); }
+.btn-primary {
+  background: var(--amber-dim); border: 1px solid var(--amber); border-radius: 6px;
+  padding: 8px 14px; cursor: pointer; color: var(--amber);
+  font-family: 'JetBrains Mono', monospace; font-size: .72rem; font-weight: 700;
+  transition: background .15s;
+}
+.btn-primary:hover { background: var(--amber); color: var(--bg); }
+.btn-secondary {
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px;
+  padding: 7px 12px; cursor: pointer; color: var(--text-mid);
+  font-family: 'JetBrains Mono', monospace; font-size: .68rem;
+}
+.btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
+.btn-danger {
+  background: none; border: 1px solid rgba(200,74,42,.4); border-radius: 6px;
+  padding: 5px 10px; cursor: pointer; color: var(--skip);
+  font-family: 'JetBrains Mono', monospace; font-size: .65rem;
+}
+.btn-danger:hover { background: rgba(200,74,42,.1); }
+
+/* Log filter bar */
+.filter-bar {
+  display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.filter-chip {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 20px;
+  padding: 5px 12px; cursor: pointer; font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem; color: var(--text-dim); transition: all .15s;
+}
+.filter-chip.active { border-color: var(--amber); color: var(--amber); background: var(--bg4); }
+
+/* Log entries */
+.log-entry {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 8px; overflow: hidden;
+}
+.log-entry-head {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.log-badge {
+  width: 32px; height: 32px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.log-badge.harvest { background: rgba(200,146,42,.15); border: 1px solid rgba(200,146,42,.4); }
+.log-badge.sighting { background: rgba(122,182,72,.1); border: 1px solid rgba(122,182,72,.3); }
+.log-meta { flex: 1; min-width: 0; }
+.log-meta .log-who { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--amber); font-weight: 700; }
+.log-meta .log-where { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--text-dim); margin-top: 1px; }
+.log-date-col { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--text-dim); line-height: 1.5; flex-shrink: 0; }
+.log-deer-row { padding: 8px 14px; display: flex; gap: 12px; align-items: center; }
+.deer-tag {
+  padding: 4px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: .65rem;
+}
+.deer-tag.buck { background: rgba(200,146,42,.1); border: 1px solid rgba(200,146,42,.3); color: var(--amber); }
+.deer-tag.doe  { background: rgba(122,182,72,.08); border: 1px solid rgba(122,182,72,.25); color: var(--hunt); }
+.deer-tag.unknown { background: rgba(96,96,80,.2); border: 1px solid rgba(96,96,80,.4); color: var(--text-mid); }
+.log-notes { padding: 6px 14px 10px; font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--text-mid); line-height: 1.6; border-top: 1px solid var(--border); }
+.weather-snap { padding: 6px 14px 10px; display: flex; gap: 10px; flex-wrap: wrap; border-top: 1px solid var(--border); }
+.w-chip { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--text-dim); background: var(--bg3); border-radius: 4px; padding: 3px 7px; }
+
+/* Stats summary */
+.stats-summary {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px;
+}
+.stat-box {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px; text-align: center;
+}
+.stat-box .stat-big { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; color: var(--text-bright); line-height: 1; }
+.stat-box .stat-lbl { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
+
+/*  FORM MODAL  */
+.form-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 50;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.form-modal.hidden { display: none; }
+.form-sheet {
+  background: var(--bg2); border-top: 1px solid var(--border2); border-radius: 16px 16px 0 0;
+  width: 100%; max-width: 600px; padding: 20px 20px calc(20px + var(--safe-bot));
+  max-height: 90vh; overflow-y: auto;
+}
+.form-sheet h2 {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 700;
+  color: var(--amber); margin-bottom: 16px;
+}
+.form-group { margin-bottom: 12px; }
+.form-label { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; display: block; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px;
+  padding: 10px 12px; color: var(--text-bright);
+  font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+}
+.form-select { appearance: none; }
+.form-textarea { min-height: 80px; resize: vertical; }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-dim); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-actions { display: flex; gap: 8px; margin-top: 16px; }
+.form-actions .btn-primary { flex: 1; }
+
+/*  CAM LOG  */
+.cam-entry {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 8px; padding: 12px 14px;
+}
+.cam-entry-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.cam-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; color: var(--amber); }
+.cam-date { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--text-dim); }
+.cam-detail { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--text-mid); line-height: 1.6; }
+
+/*  MAP  */
+#map { width: 100%; height: 380px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; z-index: 1; position: relative; }
+.leaflet-pane, .leaflet-top, .leaflet-bottom { z-index: 1 !important; }
+.leaflet-control { z-index: 2 !important; }
+.map-controls {
+  display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;
+}
+.map-layer-btn {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 6px 12px; cursor: pointer; font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem; color: var(--text-dim); transition: all .15s;
+}
+.map-layer-btn.active { border-color: var(--amber); color: var(--amber); background: var(--bg4); }
+.stand-info-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 8px;
+}
+.stand-info-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; }
+.stand-winds { display: flex; flex-wrap: wrap; gap: 4px; }
+.wind-badge { font-family: 'JetBrains Mono', monospace; font-size: .6rem; padding: 3px 7px; border-radius: 4px; }
+.wind-badge.good { background: rgba(122,182,72,.1); border: 1px solid rgba(122,182,72,.3); color: var(--hunt); }
+.wind-badge.now  { background: rgba(122,182,72,.3); border: 1px solid var(--hunt); color: var(--hunt); font-weight: 700; }
+.wind-badge.bad  { background: rgba(96,96,80,.1); border: 1px solid rgba(96,96,80,.3); color: var(--text-dim); }
+
+/*  ECOSYSTEM  */
+.eco-score-ring { text-align: center; padding: 20px 0 10px; }
+.eco-score-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 700; color: var(--amber); line-height: 1; }
+.eco-score-lbl { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .1em; margin-top: 4px; }
+.eco-category {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 10px; overflow: hidden;
+}
+.eco-cat-head {
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  justify-content: space-between; border-bottom: 1px solid var(--border);
+}
+.eco-cat-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; color: var(--text-bright); }
+.eco-item {
+  padding: 8px 14px; border-bottom: 1px solid var(--border); display: flex;
+  align-items: center; gap: 10px;
+}
+.eco-item:last-child { border-bottom: none; }
+.eco-item-icon { font-size: 1rem; flex-shrink: 0; }
+.eco-item-info { flex: 1; min-width: 0; }
+.eco-item-name { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--text-bright); }
+.eco-item-detail { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--text-dim); margin-top: 2px; }
+.eco-status {
+  font-family: 'JetBrains Mono', monospace; font-size: .6rem; padding: 3px 8px;
+  border-radius: 4px; flex-shrink: 0;
+}
+.eco-status.done    { background: rgba(122,182,72,.1); border: 1px solid rgba(122,182,72,.3); color: var(--hunt); }
+.eco-status.planned { background: rgba(200,146,42,.08); border: 1px solid rgba(200,146,42,.3); color: var(--amber); }
+.eco-status.idea    { background: rgba(96,96,80,.1); border: 1px solid rgba(96,96,80,.3); color: var(--text-dim); }
+.eco-progress { margin-top: 6px; }
+.eco-progress-bar { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.eco-progress-fill { height: 100%; background: var(--amber); border-radius: 2px; transition: width .6s; }
+
+/*  CALENDAR  */
+.cal-event {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 16px; margin-bottom: 8px; display: flex; gap: 14px;
+}
+.cal-event.past { opacity: .45; }
+.cal-event.today { border-color: var(--amber); background: var(--bg4); }
+.cal-event.active-now { border-color: var(--hunt); }
+.cal-date-col { flex-shrink: 0; text-align: center; min-width: 46px; }
+.cal-month { font-family: 'JetBrains Mono', monospace; font-size: .58rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }
+.cal-day   { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--text-bright); line-height: 1; }
+.cal-info  { flex: 1; }
+.cal-event-name { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; color: var(--text-bright); line-height: 1.2; }
+.cal-event-desc { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--text-dim); margin-top: 3px; line-height: 1.5; }
+.cal-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+/*  NOTIFY BTN  */
+.notify-bar {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+}
+.notify-text { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--text-mid); }
+#notifyBtn { font-size: .68rem; padding: 7px 12px; }
+
+/* empty state */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: .72rem; line-height: 1.8; }
+.empty-state .e-icon { font-size: 2rem; display: block; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- 
+     HUNTER SELECT MODAL
+ -->
+<div class="modal-overlay" id="hunterModal">
+  <div class="modal-box">
+    <div class="modal-title">Who's Hunting?</div>
+    <div class="modal-sub">SELECT YOUR NAME TO LOG HUNTS & SIGHTINGS</div>
+    <div class="hunter-grid" id="hunterGrid">
+      <button class="hunter-btn" onclick="selectHunter('Bryan')"><span class="hunter-initials">BR</span>Bryan</button>
+      <button class="hunter-btn" onclick="selectHunter('Mason')"><span class="hunter-initials">MA</span>Mason</button>
+      <button class="hunter-btn" onclick="selectHunter('Jack')"><span class="hunter-initials">JA</span>Jack</button>
+      <button class="hunter-btn" onclick="selectHunter('Zane')"><span class="hunter-initials">ZA</span>Zane</button>
+      <button class="hunter-btn" onclick="selectHunter('Pete')"><span class="hunter-initials">PE</span>Pete</button>
+    </div>
+    <div class="modal-divider">— OR ADD A HUNTER —</div>
+    <div class="modal-input-row">
+      <input class="modal-input" id="newHunterInput" placeholder="Hunter name…" maxlength="20">
+      <button class="btn-add" onclick="addHunter()">ADD</button>
+    </div>
+  </div>
+</div>
+
+<!-- 
+     HUNT LOG FORM
+ -->
+<div class="form-modal hidden" id="huntForm">
+  <div class="form-sheet">
+    <h2>Log Entry</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" id="lf-date" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time</label>
+        <input class="form-input" id="lf-time" type="time">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Stand</label>
+        <select class="form-select" id="lf-stand">
+          <option>S Ladder</option>
+          <option>N Ladder</option>
+          <option>Box Blind</option>
+          <option>Bryan Saddle</option>
+          <option>Mason Pop-up</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Entry Type</label>
+        <select class="form-select" id="lf-type">
+          <option value="sighting">Sighting</option>
+          <option value="harvest">Harvest</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Deer Type</label>
+        <select class="form-select" id="lf-deer">
+          <option value="buck">Buck</option>
+          <option value="doe">Doe</option>
+          <option value="unknown">Unknown</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Antler Points</label>
+        <input class="form-input" id="lf-points" type="number" min="0" max="30" placeholder="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Distance (yds)</label>
+      <input class="form-input" id="lf-distance" type="number" min="0" max="500" placeholder="optional">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-textarea" id="lf-notes" placeholder="What happened…"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeHuntForm()">Cancel</button>
+      <button class="btn-primary" onclick="saveHuntEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- 
+     CAM LOG FORM
+ -->
+<div class="form-modal hidden" id="camForm">
+  <div class="form-sheet">
+    <h2>Trail Cam Entry</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Camera Name</label>
+        <input class="form-input" id="cf-camera" placeholder="e.g. Creek Cam">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stand / Location</label>
+        <select class="form-select" id="cf-stand">
+          <option>S Ladder</option>
+          <option>N Ladder</option>
+          <option>Box Blind</option>
+          <option>Bryan Saddle</option>
+          <option>Mason Pop-up</option>
+          <option>Creek Bottom</option>
+          <option>Food Plot</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" id="cf-date" type="date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time</label>
+        <input class="form-input" id="cf-time" type="time">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Animal Type</label>
+        <select class="form-select" id="cf-animal">
+          <option value="buck">Buck</option>
+          <option value="doe">Doe</option>
+          <option value="fawn">Fawn</option>
+          <option value="turkey">Turkey</option>
+          <option value="hog">Hog</option>
+          <option value="coyote">Coyote</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Antler Points</label>
+        <input class="form-input" id="cf-points" type="number" min="0" max="30" placeholder="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-textarea" id="cf-notes" placeholder="Describe the animal, direction of travel…"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeCamForm()">Cancel</button>
+      <button class="btn-primary" onclick="saveCamEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- 
+     ECO FORM
+ -->
+<div class="form-modal hidden" id="ecoForm">
+  <div class="form-sheet">
+    <h2>Habitat Project</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Project Type</label>
+        <select class="form-select" id="ef-type">
+          <option value="food_plot">Food Plot</option>
+          <option value="water">Water Source</option>
+          <option value="bedding">Bedding Area</option>
+          <option value="mineral">Mineral / Salt</option>
+          <option value="timber">Timber Stand Improvement</option>
+          <option value="brush">Brush Pile / Cover</option>
+          <option value="travel">Travel Corridor</option>
+          <option value="other">Other Improvement</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="ef-status">
+          <option value="done">Completed</option>
+          <option value="planned">Planned</option>
+          <option value="idea">Idea</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Name / Description</label>
+      <input class="form-input" id="ef-name" placeholder="e.g. South Food Plot — clover mix">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date</label>
+      <input class="form-input" id="ef-date" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-textarea" id="ef-notes" placeholder="Size, seed mix, location details, results…"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closeEcoForm()">Cancel</button>
+      <button class="btn-primary" onclick="saveEcoEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- 
+     HEADER
+ -->
+<header>
+  <div class="header-badge">BH</div>
+  <div class="header-text">
+    <h1>Bryan's Hunt</h1>
+    <p>OSAGE COUNTY · OKLAHOMA</p>
+  </div>
+  <button class="header-hunter" id="hunterDisplay" onclick="switchHunter()">
+    <span id="hunterName">—</span>
+  </button>
+</header>
+
+<!-- Tab Nav -->
+<nav class="tab-nav">
+  <button class="tab-nav-btn active" onclick="switchTab('forecast',this)">Forecast</button>
+  <button class="tab-nav-btn" onclick="switchTab('map',this)">Map</button>
+  <button class="tab-nav-btn" onclick="switchTab('huntlog',this)">Hunt Log</button>
+  <button class="tab-nav-btn" onclick="switchTab('camlog',this)">Cam Log</button>
+  <button class="tab-nav-btn" onclick="switchTab('eco',this)">Ecosystem</button>
+  <button class="tab-nav-btn" onclick="switchTab('calendar',this)">Season</button>
+</nav>
+
+<!-- 
+     FORECAST TAB
+ -->
+<!-- Day Strip (only visible on forecast tab) -->
+<div class="week-strip" id="weekStrip" style="display:none">
+  <!-- populated by JS -->
+</div>
+
+<div class="main-view">
+
+<!-- FORECAST PANE -->
+<div class="tab-pane active" id="pane-forecast">
+  <div class="notify-bar">
+    <span class="notify-text">Get notified on Hunt days</span>
+    <button class="btn-secondary" id="notifyBtn" onclick="requestNotify()">Enable Alerts</button>
+  </div>
+  <div id="forecastContent">
+    <div class="empty-state"><span class="e-icon">—</span>Loading forecast…</div>
+  </div>
+</div>
+
+<!-- MAP PANE -->
+<div class="tab-pane" id="pane-map">
+  <div class="map-controls">
+    <button class="map-layer-btn active" onclick="setLayer('satellite',this)">Satellite</button>
+    <button class="map-layer-btn" onclick="setLayer('topo',this)">Topo</button>
+    <button class="map-layer-btn" onclick="setLayer('hybrid',this)">Hybrid</button>
+  </div>
+  <div id="map"></div>
+  <div id="standCards"></div>
+</div>
+
+<!-- HUNT LOG PANE -->
+<div class="tab-pane" id="pane-huntlog">
+  <div class="log-header">
+    <div class="log-title">Hunt Log</div>
+    <button class="btn-primary" onclick="openHuntForm()">+ Entry</button>
+  </div>
+  <div class="stats-summary" id="huntStats"></div>
+  <div class="filter-bar" id="huntFilters">
+    <span class="filter-chip active" data-filter="all" onclick="setHuntFilter('all',this)">All</span>
+    <span class="filter-chip" data-filter="harvest" onclick="setHuntFilter('harvest',this)">Harvests</span>
+    <span class="filter-chip" data-filter="sighting" onclick="setHuntFilter('sighting',this)">Sightings</span>
+    <span class="filter-chip" data-filter="buck" onclick="setHuntFilter('buck',this)">Bucks</span>
+  </div>
+  <div id="huntLogEntries"></div>
+</div>
+
+<!-- CAM LOG PANE -->
+<div class="tab-pane" id="pane-camlog">
+  <div class="log-header">
+    <div class="log-title">Trail Cam Log</div>
+    <button class="btn-primary" onclick="openCamForm()">+ Entry</button>
+  </div>
+  <div class="stats-summary" id="camStats"></div>
+  <div class="filter-bar" id="camFilters">
+    <span class="filter-chip active" data-filter="all" onclick="setCamFilter('all',this)">All</span>
+    <span class="filter-chip" data-filter="buck" onclick="setCamFilter('buck',this)">Bucks</span>
+    <span class="filter-chip" data-filter="doe" onclick="setCamFilter('doe',this)">Does</span>
+    <span class="filter-chip" data-filter="turkey" onclick="setCamFilter('turkey',this)">Turkey</span>
+  </div>
+  <div id="camLogEntries"></div>
+</div>
+
+<!-- ECOSYSTEM PANE -->
+<div class="tab-pane" id="pane-eco">
+  <div class="log-header">
+    <div class="log-title">Ecosystem</div>
+    <button class="btn-primary" onclick="openEcoForm()">+ Project</button>
+  </div>
+  <div id="ecoContent"></div>
+</div>
+
+<!-- CALENDAR PANE -->
+<div class="tab-pane" id="pane-calendar">
+  <div id="calContent"></div>
+</div>
+
+</div><!-- .main-view -->
+
+<script>
+// 
+// CONSTANTS
+// 
+const LAT  = 36.678800;
+const LON  = -96.078444;
+const STAND_LABEL = "Bryan's Lease · Osage County, OK";
+const YEAR = new Date().getFullYear();
+
+const STANDS = [
+  { id:'s-ladder',  name:'S Ladder',     icon:'L', lat: LAT-0.0014, lon: LON+0.0002, goodWinds:['N','NNE','NE','NNW','WNW'], note:'South-facing, best morning stands' },
+  { id:'n-ladder',  name:'N Ladder',     icon:'L', lat: LAT+0.0018, lon: LON-0.0004, goodWinds:['S','SE','SW','SSE','SSW'], note:'North end overlooking creek bottom' },
+  { id:'box-blind', name:'Box Blind',    icon:'B', lat: LAT+0.0002, lon: LON+0.0015, goodWinds:['W','WNW','SW','NW'],       note:'Enclosed blind, all-weather option' },
+  { id:'saddle',    name:'Bryan Saddle', icon:'S', lat: LAT-0.0005, lon: LON-0.0012, goodWinds:['E','ENE','NE','SE'],       note:'Saddle terrain, great rut movement' },
+  { id:'mason-pu',  name:'Mason Pop-up', icon:'M', lat: LAT+0.0010, lon: LON+0.0008, goodWinds:['N','NW','W','NNW'],        note:'Mobile setup, flexible placement' },
+];
+
+const MONEY_WINDS = ['N','NNE','NE','NNW','WNW']; // for S Ladder scoring
+
+//  PERSISTENT DATA 
+const DEFAULT_HUNTERS = ["Bryan","Mason","Jack","Zane","Pete"];
+let hunters = (() => {
+  try {
+    const stored = JSON.parse(localStorage.getItem('bryansHunters') || '[]');
+    // Merge defaults with any extras the user has added
+    const merged = [...new Set([...DEFAULT_HUNTERS, ...stored.filter(h => h && !DEFAULT_HUNTERS.includes(h))])];
+    localStorage.setItem('bryansHunters', JSON.stringify(merged));
+    return merged;
+  } catch(e) { return DEFAULT_HUNTERS; }
+})();
+let currentHunter = localStorage.getItem('bryansCurrentHunter') || '';
+let huntLog     = JSON.parse(localStorage.getItem('bryansHuntLog')  || '[]');
+let camLog      = JSON.parse(localStorage.getItem('bryansCamLog')   || '[]');
+let ecoLog      = JSON.parse(localStorage.getItem('bryansEcoLog')   || '[]');
+
+//  WEATHER CACHE 
+let weatherData  = null;
+let selectedDay  = 0;
+let currentTab   = 'forecast';
+let huntFilter   = 'all';
+let camFilter    = 'all';
+let mapObj       = null;
+let currentLayer = null;
+let layerSat     = null;
+let layerTopo    = null;
+let layerLabels  = null;
+
+// 
+// HUNTER PROFILES
+// 
+const HUNTER_ICONS = ['','','','','','','',''];
+
+function renderHunterModal() {
+  // The 5 default hunters are hardcoded in HTML — only add extras
+  const grid = document.getElementById('hunterGrid');
+  const extras = hunters.filter(h => !DEFAULT_HUNTERS.includes(h));
+  // Remove any previously-added extra buttons
+  grid.querySelectorAll('.hunter-btn.extra').forEach(b => b.remove());
+  extras.forEach(h => {
+    const btn = document.createElement('button');
+    btn.className = 'hunter-btn extra';
+    btn.onclick = () => selectHunter(h);
+    btn.innerHTML = `<span class="hunter-initials">${h.slice(0,2).toUpperCase()}</span>${h}`;
+    grid.appendChild(btn);
+  });
+}
+
+function selectHunter(name) {
+  currentHunter = name;
+  localStorage.setItem('bryansCurrentHunter', name);
+  document.getElementById('hunterName').textContent = name;
+  document.getElementById('hunterModal').classList.add('hidden');
+}
+
+function addHunter() {
+  const input = document.getElementById('newHunterInput');
+  const name = input.value.trim();
+  if (!name || hunters.includes(name)) { input.focus(); return; }
+  hunters.push(name);
+  localStorage.setItem('bryansHunters', JSON.stringify(hunters));
+  input.value = '';
+  renderHunterModal();
+}
+
+function switchHunter() {
+  renderHunterModal();
+  document.getElementById('hunterModal').classList.remove('hidden');
+}
+
+// 
+// TAB ROUTING
+// 
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('pane-' + tab).classList.add('active');
+  btn.classList.add('active');
+
+  const strip = document.getElementById('weekStrip');
+  strip.style.display = (tab === 'forecast') ? 'flex' : 'none';
+
+  if (tab === 'map') initMap();
+  if (tab === 'huntlog') renderHuntLog();
+  if (tab === 'camlog') renderCamLog();
+  if (tab === 'eco') renderEco();
+  if (tab === 'calendar') renderCalendar();
+}
+
+// 
+// SOLUNAR & MOON CALCULATIONS
+// 
+function julianDate(d) {
+  const Y=d.getFullYear(), M=d.getMonth()+1, D=d.getDate();
+  const A=Math.floor(Y/100), B=2-A+Math.floor(A/4);
+  return Math.floor(365.25*(Y+4716))+Math.floor(30.6001*(M+1))+D+B-1524.5;
+}
+function moonAge(d) {
+  const jd = julianDate(d);
+  const known = 2451550.1; // known new moon Jan 6, 2000
+  const cycle = 29.53058867;
+  return ((jd - known) % cycle + cycle) % cycle;
+}
+function moonIllumination(age) {
+  return (1 - Math.cos((age / 29.53058867) * 2 * Math.PI)) / 2;
+}
+function moonPhaseName(age) {
+  if (age < 1.85)  return 'New Moon';
+  if (age < 7.38)  return 'Waxing Crescent';
+  if (age < 9.22)  return 'First Quarter';
+  if (age < 14.77) return 'Waxing Gibbous';
+  if (age < 16.61) return 'Full Moon';
+  if (age < 22.15) return 'Waning Gibbous';
+  if (age < 23.99) return 'Last Quarter';
+  if (age < 29.53) return 'Waning Crescent';
+  return 'New Moon';
+}
+function moonPhaseScore(age) {
+  const ill = moonIllumination(age);
+  const daysFromFull = Math.abs(age - 14.76);
+  if (daysFromFull < 1.5) return 100; // Full moon
+  if (daysFromFull < 3) return 85;
+  if (age < 3 || age > 26) return 90; // near new moon
+  return Math.round(40 + ill * 60);
+}
+
+// Moon phase SVG
+function moonSVG(age, size=42) {
+  const r = size / 2 - 2;
+  const ill = moonIllumination(age);
+  const cx = size / 2, cy = size / 2;
+  const waxing = age < 14.77;
+  const rx = r * Math.abs(2 * ill - 1);
+
+  let path;
+  if (age < 0.5 || age > 29) {
+    // New moon
+    path = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#3a3028"/>`;
+  } else if (ill < 0.03) {
+    path = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#3a3028"/>`;
+  } else if (ill > 0.97) {
+    path = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#f8e880"/>`;
+  } else {
+    // Left half dark or light, right half opposite
+    const lit = waxing ? '#f8e880' : '#3a3028';
+    const dark = waxing ? '#3a3028' : '#f8e880';
+    // Curved terminator using ellipse
+    const sweep = waxing ? (ill > 0.5 ? 1 : 0) : (ill > 0.5 ? 0 : 1);
+    const termX = rx;
+    path = `
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="${dark}"/>
+      <path d="M ${cx} ${cy-r}
+               A ${r} ${r} 0 0 ${waxing?1:0} ${cx} ${cy+r}
+               A ${termX.toFixed(1)} ${r} 0 0 ${sweep} ${cx} ${cy-r} Z"
+            fill="${lit}"/>
+    `;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="#2c2010" stroke="#c8b898" stroke-width="1"/>
+    ${path}
+  </svg>`;
+}
+
+function solunarPeriods(date, sunrise, sunset) {
+  const age = moonAge(date);
+  const cycle = 24 * 60; // minutes
+  const transitOffset = (age / 29.53) * cycle;
+  const moonTransit = (12 * 60 + transitOffset) % cycle;
+  const moonUnderfoot = (moonTransit + 12 * 60) % cycle;
+
+  function fmt(mins) {
+    const h = Math.floor(mins/60) % 24;
+    const m = Math.round(mins % 60);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    return `${(h%12||12)}:${m.toString().padStart(2,'0')} ${ampm}`;
+  }
+
+  const periods = [];
+  [moonTransit, moonUnderfoot].forEach(t => {
+    const start = (t - 60 + cycle) % cycle;
+    const end   = (t + 60) % cycle;
+    periods.push({ type:'major', label:'Major', start: fmt(start), end: fmt(end), peak: fmt(t) });
+    // minor at 90° offset
+    const m1 = (t + 6*60) % cycle;
+    const m2 = (t - 6*60 + cycle) % cycle;
+    periods.push({ type:'minor', label:'Minor', start: fmt((m1-30+cycle)%cycle), end: fmt((m1+30)%cycle), peak: fmt(m1) });
+  });
+  return periods.slice(0,4);
+}
+
+// 
+// RUT PHASES — Osage County, OK
+// 
+const RUT_PHASES = [
+  { name:'Pre-Season',   start:[9,1],  end:[9,30],  icon:null, desc:'Velvet shed, summer patterns', next:'Seek activity after cold fronts' },
+  { name:'Early Season', start:[10,1], end:[10,20], icon:null, desc:'Bucks still in bachelor groups', next:'Pattern food sources, beat summer heat' },
+  { name:'Pre-Rut',      start:[10,21],end:[10,31], icon:null, desc:'Scrapes & rubs appearing, bucks restless', next:'Hunt pinch points and downwind of food' },
+  { name:'Seeking',      start:[11,1], end:[11,8],  icon:null, desc:'Bucks cruising for does', next:'All-day sits, rattle & grunt call' },
+  { name:'Peak Rut',     start:[11,9], end:[11,18], icon:null, desc:'Lockdown — bucks glued to does', next:'Hunt core doe areas and bedding' },
+  { name:'Post-Rut',     start:[11,19],end:[11,30], icon:null, desc:'Bucks worn down, seeking food', next:'High-carb food sources, recovery movement' },
+  { name:'Late Season',  start:[12,1], end:[1,15],  icon:null, desc:'Cold drives deer to calories', next:'Hunt warm afternoon food plots' },
+];
+
+function getCurrentRutPhase(date) {
+  const m = date.getMonth()+1, d = date.getDate();
+  for (const p of RUT_PHASES) {
+    const [sm,sd] = p.start, [em,ed] = p.end;
+    let inRange;
+    if (sm <= em) { inRange = (m > sm || (m===sm && d>=sd)) && (m < em || (m===em && d<=ed)); }
+    else { inRange = (m > sm || (m===sm && d>=sd)) || (m < em || (m===em && d<=ed)); }
+    if (inRange) {
+      const nextPhaseIdx = RUT_PHASES.indexOf(p) + 1;
+      const np = RUT_PHASES[nextPhaseIdx % RUT_PHASES.length];
+      return { ...p, nextPhase: np };
+    }
+  }
+  return RUT_PHASES[1];
+}
+
+// 
+// HUNTING SCORE ALGORITHM
+// 
+function windDir(degrees) {
+  const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  return dirs[Math.round(degrees / 22.5) % 16];
+}
+
+function scoreHuntDay(weather, dayIdx) {
+  const { temp, wind, windDir: wDir, pressure, precip, pressurePrev } = weather;
+  const date = new Date();
+  date.setDate(date.getDate() + dayIdx);
+  const moonAge_ = moonAge(date);
+  const rutPhase = getCurrentRutPhase(date);
+
+  // Weights by day distance
+  let w;
+  if (dayIdx <= 1) w = { pressure:.28, temp:.20, wind:.18, precip:.08, solunar:.12, moon:.08, rut:.06 };
+  else if (dayIdx <= 3) w = { pressure:.22, temp:.18, wind:.15, precip:.07, solunar:.18, moon:.10, rut:.10 };
+  else w = { pressure:.12, temp:.13, wind:.10, precip:.05, solunar:.25, moon:.18, rut:.17 };
+
+  // Pressure score
+  const pDrop = pressurePrev - pressure;
+  let pScore;
+  if (pDrop >= 0.1 && pDrop < 0.3)  pScore = 100;
+  else if (pDrop >= 0.3)             pScore = 75;
+  else if (pDrop > 0 && pDrop < 0.1) pScore = 80;
+  else if (pDrop <= 0 && pDrop > -0.1) pScore = 60;
+  else pScore = 35;
+
+  // Temp score — ideal 35-55°F
+  let tScore;
+  if (temp >= 35 && temp <= 55) tScore = 100;
+  else if (temp > 55 && temp <= 65) tScore = 75;
+  else if (temp > 65 && temp <= 75) tScore = 45;
+  else if (temp > 75) tScore = 20;
+  else if (temp < 35) tScore = 70; // cold snap
+  else tScore = 50;
+
+  // Wind score
+  let wScore;
+  if (wind >= 4 && wind <= 10) wScore = 100;
+  else if (wind < 4) wScore = 60;
+  else if (wind <= 15) wScore = 75;
+  else if (wind <= 20) wScore = 40;
+  else if (wind <= 25) wScore = 15;
+  else wScore = 0;
+
+  // Precip score
+  let prScore;
+  if (precip === 0) prScore = 80;
+  else if (precip < 0.05) prScore = 70; // light drizzle = good
+  else if (precip < 0.25) prScore = 50;
+  else prScore = 15;
+
+  // Solunar score
+  const sol = solunarPeriods(date, '6:00 AM', '6:30 PM');
+  const solScore = sol.length >= 2 ? 75 : 55;
+
+  // Moon score
+  const mScore = moonPhaseScore(moonAge_);
+
+  // Rut multiplier
+  const rutMult = { 'Peak Rut':1.18, 'Seeking':1.12, 'Pre-Rut':1.08,
+                    'Post-Rut':1.05, 'Early Season':1.0, 'Pre-Season':0.95, 'Late Season':1.03 };
+  const rMult = rutMult[rutPhase.name] || 1.0;
+
+  const raw = (pScore*w.pressure + tScore*w.temp + wScore*w.wind +
+               prScore*w.precip + solScore*w.solunar + mScore*w.moon) * rMult;
+  const score = Math.min(99, Math.round(raw));
+  const cls = score >= 72 ? 'hunt' : score >= 48 ? 'marginal' : 'skip';
+  const verdict = score >= 72 ? 'HUNT IT' : score >= 48 ? 'MARGINAL' : 'SKIP IT';
+
+  return { score, cls, verdict, pDrop, pScore, tScore, wScore, prScore, mScore, rutPhase, moonAge:moonAge_, sol };
+}
+
+// 
+// WEATHER FETCH
+// 
+async function fetchWeather() {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&hourly=temperature_2m,precipitation,windspeed_10m,winddirection_10m,relativehumidity_2m,surface_pressure&daily=sunrise,sunset,precipitation_sum,windspeed_10m_max&temperature_unit=fahrenheit&windspeed_unit=mph&precipitation_unit=inch&timezone=America%2FChicago&forecast_days=7`;
+  try {
+    const r = await fetch(url);
+    const data = await r.json();
+    processWeatherData(data);
+  } catch(e) {
+    document.getElementById('forecastContent').innerHTML = `
+      <div class="alert-banner weather">Could not load weather. Check your connection.</div>`;
+  }
+}
+
+function processWeatherData(data) {
+  const { hourly, daily } = data;
+  weatherData = [];
+
+  for (let d=0; d<7; d++) {
+    const dayStart = d * 24;
+    const temps = hourly.temperature_2m.slice(dayStart, dayStart+24);
+    const winds = hourly.windspeed_10m.slice(dayStart, dayStart+24);
+    const windDirs = hourly.winddirection_10m.slice(dayStart, dayStart+24);
+    const pressures = hourly.surface_pressure.slice(dayStart, dayStart+24);
+    const precips = hourly.precipitation.slice(dayStart, dayStart+24);
+
+    // Morning hours (5-10am)
+    const morningTemps = temps.slice(5,11);
+    const morningWinds = winds.slice(5,11);
+    const morningPressures = pressures.slice(5,11);
+    const morningPrecips = precips.slice(5,11);
+    const morningWindDirs = windDirs.slice(5,11);
+
+    const avg = arr => arr.reduce((a,b)=>a+b,0)/arr.length;
+
+    const prevPressures = d > 0
+      ? hourly.surface_pressure.slice((d-1)*24+18, (d-1)*24+24)
+      : pressures.slice(0,6);
+
+    const wd = windDir(avg(morningWindDirs));
+
+    weatherData.push({
+      date: new Date(daily.time[d] + 'T12:00:00'),
+      temp: Math.round(avg(morningTemps)),
+      tempLow: Math.round(Math.min(...temps)),
+      tempHigh: Math.round(Math.max(...temps)),
+      wind: Math.round(avg(morningWinds)),
+      windDir: wd,
+      windDeg: Math.round(avg(morningWindDirs)),
+      pressure: avg(morningPressures),
+      pressurePrev: avg(prevPressures),
+      precip: daily.precipitation_sum[d] || 0,
+      precipProbability: precips.filter(p=>p>0).length * 4, // rough %
+      humidity: hourly.relativehumidity_2m ? Math.round(avg(hourly.relativehumidity_2m.slice(dayStart,dayStart+24))) : 60,
+      sunrise: daily.sunrise[d] ? new Date(daily.sunrise[d]).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) : '--',
+      sunset:  daily.sunset[d]  ? new Date(daily.sunset[d]).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) : '--',
+    });
+  }
+
+  buildWeekStrip();
+  renderForecastDay(0);
+}
+
+// 
+// FORECAST RENDERING
+// 
+function buildWeekStrip() {
+  const strip = document.getElementById('weekStrip');
+  const DAYS = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  strip.style.display = 'flex';
+  strip.innerHTML = weatherData.map((day, i) => {
+    const scored = scoreHuntDay(day, i);
+    const alerts = getAlerts(day, i, scored);
+    const hasAlert = alerts.length > 0;
+    const isTomorrow = i === 1;
+    const dateNum = day.date.getDate();
+    const dow = DAYS[day.date.getDay()];
+    return `<div class="day-tab${i===0?' active':''}${hasAlert?' has-alert':''}" onclick="renderForecastDay(${i})" id="daytab-${i}">
+      <div class="dow">${dow}</div>
+      <div class="date-num">${dateNum}</div>
+      <div class="tab-score ${scored.cls}">${scored.score}</div>
+      ${hasAlert ? `<div class="tab-alert hot"></div>` : '<div class="tab-alert"> </div>'}
+    </div>`;
+  }).join('');
+}
+
+function getAlerts(day, i, scored) {
+  const alerts = [];
+  if (day.pressurePrev - day.pressure >= 0.1) alerts.push({ type:'pressure', msg:`↓ Pressure dropping — expect buck movement` });
+  if (day.pressurePrev - day.pressure <= -0.15) alerts.push({ type:'vacuum', msg:`↑ Pressure rising after front — vacuum effect active` });
+  if (day.precip > 0 && day.precip < 0.1) alerts.push({ type:'weather', msg:`Light rain — deer often move through drizzle` });
+  if (scored.rutPhase.name === 'Peak Rut') alerts.push({ type:'weather', msg:`Peak rut lockdown — hunt doe bedding` });
+  if (scored.rutPhase.name === 'Seeking') alerts.push({ type:'weather', msg:`Bucks cruising — all-day sit potential` });
+  return alerts;
+}
+
+function renderForecastDay(idx) {
+  selectedDay = idx;
+  document.querySelectorAll('.day-tab').forEach((t,i) => {
+    t.classList.toggle('active', i === idx);
+  });
+
+  const day = weatherData[idx];
+  const scored = scoreHuntDay(day, idx);
+  const alerts = getAlerts(day, idx, scored);
+  const age = scored.moonAge;
+  const moonName = moonPhaseName(age);
+  const moonIll = Math.round(moonIllumination(age) * 100);
+  const sol = solunarPeriods(day.date, day.sunrise, day.sunset);
+  const pDiff = day.pressurePrev - day.pressure;
+  const pArrow = pDiff > 0.05 ? '↓' : pDiff < -0.05 ? '↑' : '→';
+  const pColor = pDiff > 0.05 ? 'var(--p-drop)' : pDiff < -0.05 ? 'var(--p-rise)' : 'var(--text-dim)';
+  const isMoneyWind = MONEY_WINDS.includes(day.windDir);
+  const windCompText = isMoneyWind
+    ? `${day.windDir} — Money wind for S Ladder`
+    : `${day.windDir} — Not ideal for S Ladder`;
+  const windCompClass = isMoneyWind ? 'good' : 'bad';
+
+  const dateStr = day.date.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  const isToday = idx === 0;
+
+  let html = '';
+
+  // Alert banners
+  alerts.forEach(a => { html += `<div class="alert-banner ${a.type}">${a.msg}</div>`; });
+
+  // Rut banner
+  const rp = scored.rutPhase;
+  html += `<div class="rut-banner">
+    <div class="rut-icon" style="width:28px;height:28px;border-radius:50%;background:var(--amber-dim);border:1px solid var(--border2);flex-shrink:0"></div>
+    <div class="rut-info">
+      <div class="rut-phase-name">${rp.name}</div>
+      <div class="rut-phase-sub">${rp.desc}</div>
+    </div>
+    <div class="rut-next">${rp.next}</div>
+  </div>`;
+
+  // Main score card
+  html += `<div class="session-card">
+    <div class="session-header">
+      <div>
+        <div class="session-label">${dateStr.toUpperCase()}</div>
+        <div class="verdict-text">${scored.verdict}</div>
+        <div class="verdict-sub">${getVerdictReason(scored, day)}</div>
+      </div>
+      <div class="score-block">
+        <div class="score-num ${scored.cls}">${scored.score}</div>
+        <div class="score-label">HUNT SCORE</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <div class="stat-lbl">Temp</div>
+        <div class="stat-val">${day.temp}°</div>
+        <div class="stat-sub">${day.tempLow}–${day.tempHigh}°F</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-lbl">Wind</div>
+        <div class="stat-val">${day.wind} mph</div>
+        <div class="stat-sub">${day.windDir}</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-lbl">Pressure</div>
+        <div class="stat-val" style="color:${pColor}">${pArrow} ${day.pressure.toFixed(0)} mb</div>
+        <div class="stat-sub">${Math.abs(pDiff).toFixed(2)} ${pDiff>0?'drop':'rise'}</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-lbl">Precip</div>
+        <div class="stat-val">${day.precip.toFixed(2)}"</div>
+        <div class="stat-sub">${day.precipProbability}% chance</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-lbl">Humidity</div>
+        <div class="stat-val">${day.humidity}%</div>
+        <div class="stat-sub">relative</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-lbl">Scent</div>
+        <div class="stat-val" style="font-size:.85rem">${getScentCondition(day)}</div>
+        <div class="stat-sub">${day.humidity > 70 ? 'carries well' : 'drier air'}</div>
+      </div>
+    </div>
+
+    <!-- Moon row -->
+    <div class="moon-row">
+      <div class="moon-svg-wrap">${moonSVG(age, 52)}</div>
+      <div class="moon-info">
+        <div class="moon-phase-name">${moonName}</div>
+        <div class="moon-phase-pct">${moonIll}% illuminated · Moon score: ${scored.mScore}</div>
+      </div>
+    </div>
+
+    <!-- Sunrise/Sunset -->
+    <div class="sunrise-row">
+      <div class="sunrise-item"><span>Sunrise</span> <strong>${day.sunrise}</strong></div>
+      <div class="sunrise-item"><span>Sunset</span> <strong>${day.sunset}</strong></div>
+    </div>
+
+    <!-- Solunar -->
+    <div class="solunar-row">
+      <div class="solunar-lbl">Solunar Periods</div>
+      <div class="solunar-periods">
+        ${sol.map(s => `<span class="solunar-chip ${s.type}">${s.label}: ${s.peak}</span>`).join('')}
+      </div>
+    </div>
+
+    <!-- Wind compass -->
+    <div class="wind-compass-wrap">
+      ${windCompassSVG(day.windDeg, 54)}
+      <div class="wind-compass-info">
+        <div>${day.wind} mph from ${day.windDir}</div>
+        <div class="wind-compat ${windCompClass}">${windCompText}</div>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('forecastContent').innerHTML = html;
+}
+
+function getVerdictReason(scored, day) {
+  const reasons = [];
+  if (scored.pScore >= 90) reasons.push('pressure drop active');
+  if (scored.tScore >= 90) reasons.push('ideal temp range');
+  if (scored.wScore >= 90) reasons.push('perfect wind');
+  if (scored.rutPhase.name === 'Peak Rut') reasons.push('peak rut');
+  if (scored.rutPhase.name === 'Seeking') reasons.push('bucks seeking');
+  if (day.precip > 0.5) reasons.push('heavy precip');
+  if (scored.tScore < 40) reasons.push('too warm');
+  return reasons.length ? reasons.join(' · ') : 'conditions check';
+}
+
+function getScentCondition(day) {
+  const { wind, humidity } = day;
+  if (wind < 4 && humidity > 65) return 'Excellent';
+  if (wind >= 4 && wind <= 10 && humidity > 50) return 'Good';
+  if (wind > 15) return 'Swirly';
+  return 'OK';
+}
+
+// Wind compass SVG
+function windCompassSVG(deg, size=50) {
+  const r = size/2 - 2, cx = size/2, cy = size/2;
+  const rad = (deg - 90) * Math.PI / 180;
+  const arrowLen = r * 0.65;
+  const ax = cx + arrowLen * Math.cos(rad);
+  const ay = cy + arrowLen * Math.sin(rad);
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+    <text x="${cx}" y="8" text-anchor="middle" font-size="7" fill="var(--text-dim)" font-family="monospace">N</text>
+    <text x="${cx}" y="${size-2}" text-anchor="middle" font-size="7" fill="var(--text-dim)" font-family="monospace">S</text>
+    <text x="6" y="${cy+3}" text-anchor="middle" font-size="7" fill="var(--text-dim)" font-family="monospace">W</text>
+    <text x="${size-6}" y="${cy+3}" text-anchor="middle" font-size="7" fill="var(--text-dim)" font-family="monospace">E</text>
+    <line x1="${cx}" y1="${cy}" x2="${ax}" y2="${ay}" stroke="var(--amber)" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="${ax}" cy="${ay}" r="3" fill="var(--amber)"/>
+    <circle cx="${cx}" cy="${cy}" r="2.5" fill="var(--bg2)"/>
+  </svg>`;
+}
+
+// 
+// NOTIFICATIONS
+// 
+function requestNotify() {
+  if (!('Notification' in window)) { alert('Notifications not supported on this browser.'); return; }
+  Notification.requestPermission().then(perm => {
+    const btn = document.getElementById('notifyBtn');
+    if (perm === 'granted') {
+      btn.textContent = 'Enabled';
+      btn.disabled = true;
+      checkAndNotify();
+    } else {
+      btn.textContent = 'Blocked';
+    }
+  });
+}
+function checkAndNotify() {
+  if (!weatherData) return;
+  const today = scoreHuntDay(weatherData[0], 0);
+  const tomorrow = scoreHuntDay(weatherData[1], 1);
+  if (tomorrow.score >= 72 && Notification.permission === 'granted') {
+    new Notification("Hunt Day Tomorrow!", {
+      body: `Score ${tomorrow.score}/99 — ${tomorrow.verdict}. Conditions look prime.`,
+      icon: null
+    });
+  }
+}
+
+// 
+// MAP
+// 
+function initMap() {
+  if (mapObj) {
+    mapObj.invalidateSize();
+    updateStandCards();
+    return;
+  }
+  mapObj = L.map('map', { center: [LAT, LON], zoom: 15, zoomControl: true });
+
+  layerSat = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    { attribution: 'Esri World Imagery', maxZoom: 20 }
+  );
+  layerTopo = L.tileLayer(
+    'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
+    { attribution: 'USGS Topo', maxZoom: 20 }
+  );
+  layerLabels = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+    { attribution: 'Esri Labels', maxZoom: 20, opacity: 0.8 }
+  );
+
+  layerSat.addTo(mapObj);
+
+  // Property center marker
+  const centerIcon = L.divIcon({ html: `<div style="width:10px;height:10px;border-radius:50%;background:var(--amber);border:2px solid var(--bg);box-shadow:0 0 6px rgba(200,146,42,.6)"></div>`, className:'', iconAnchor:[5,5] });
+  L.marker([LAT, LON], { icon: centerIcon }).addTo(mapObj).bindPopup(`<b>${STAND_LABEL}</b>`);
+
+  // Stand markers
+  const currentWind = weatherData ? weatherData[selectedDay].windDir : null;
+  STANDS.forEach(s => {
+    const isGood = currentWind && s.goodWinds.includes(currentWind);
+    const color = isGood ? '#7ab648' : '#c8922a';
+    const icon = L.divIcon({
+      html: `<div style="background:${color};border:2px solid var(--bg);border-radius:50%;width:14px;height:14px;box-shadow:0 0 8px ${color}88;display:flex;align-items:center;justify-content:center;font-size:8px"></div>`,
+      className: '', iconAnchor: [7,7]
+    });
+    const popup = `<b>${s.name}</b><br>${s.note}<br><small>Good winds: ${s.goodWinds.join(', ')}</small>`;
+    L.marker([s.lat, s.lon], { icon }).addTo(mapObj).bindPopup(popup);
+    // Label
+    L.marker([s.lat + 0.0003, s.lon], { icon: L.divIcon({
+      html: `<div style="font-family:monospace;font-size:10px;color:#c05c10;font-weight:700;white-space:nowrap;text-shadow:0 1px 2px rgba(255,255,255,.8)">${s.name}</div>`,
+      className: '', iconAnchor: [-4, 6]
+    }) }).addTo(mapObj);
+  });
+
+  updateStandCards();
+}
+
+function setLayer(type, btn) {
+  if (!mapObj) return;
+  document.querySelectorAll('.map-layer-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  mapObj.eachLayer(l => { if (l !== undefined) try { mapObj.removeLayer(l); } catch(e){} });
+  if (type === 'satellite' || type === 'hybrid') { layerSat.addTo(mapObj); }
+  if (type === 'topo') { layerTopo.addTo(mapObj); }
+  if (type === 'hybrid') { layerLabels.addTo(mapObj); }
+  // Re-add markers by re-running initMap logic — easier via invalidate
+  // Just reinit stands
+  STANDS.forEach(s => { /* already added */ });
+}
+
+function updateStandCards() {
+  const currentWind = weatherData ? weatherData[selectedDay].windDir : null;
+  const cards = STANDS.map(s => {
+    const winds = s.goodWinds.map(w => {
+      const isNow = w === currentWind;
+      return `<span class="wind-badge ${isNow?'now':'good'}">${w}</span>`;
+    }).join('');
+    const allWinds = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+    const badWinds = allWinds.filter(w => !s.goodWinds.includes(w));
+    const isCompatible = currentWind && s.goodWinds.includes(currentWind);
+    return `<div class="stand-info-card">
+      <div class="stand-info-name">${s.name} <span style="font-family:monospace;font-size:.72rem;padding:2px 8px;border-radius:4px;margin-left:4px;${isCompatible ? 'background:rgba(58,104,24,.12);color:var(--hunt);border:1px solid rgba(58,104,24,.3)' : currentWind ? 'background:rgba(184,32,16,.08);color:var(--skip);border:1px solid rgba(184,32,16,.25)' : ''}">${isCompatible ? 'Wind OK' : currentWind ? 'Wind off' : ''}</span></div>
+      <div style="font-family:monospace;font-size:.62rem;color:var(--text-dim);margin-bottom:6px">${s.note}</div>
+      <div style="font-family:monospace;font-size:.6rem;color:var(--text-dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em">Good winds:</div>
+      <div class="stand-winds">${winds}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('standCards').innerHTML = cards;
+}
+
+// 
+// HUNT LOG
+// 
+function openHuntForm() {
+  const today = new Date().toISOString().slice(0,10);
+  const now = new Date().toTimeString().slice(0,5);
+  document.getElementById('lf-date').value = today;
+  document.getElementById('lf-time').value = now;
+  document.getElementById('lf-notes').value = '';
+  document.getElementById('lf-points').value = '';
+  document.getElementById('lf-distance').value = '';
+  document.getElementById('huntForm').classList.remove('hidden');
+}
+function closeHuntForm() { document.getElementById('huntForm').classList.add('hidden'); }
+
+function saveHuntEntry() {
+  if (!currentHunter) { switchHunter(); return; }
+  const entry = {
+    id: Date.now(),
+    hunter: currentHunter,
+    date: document.getElementById('lf-date').value,
+    time: document.getElementById('lf-time').value,
+    stand: document.getElementById('lf-stand').value,
+    type: document.getElementById('lf-type').value,
+    deerType: document.getElementById('lf-deer').value,
+    points: parseInt(document.getElementById('lf-points').value) || 0,
+    distance: parseInt(document.getElementById('lf-distance').value) || null,
+    notes: document.getElementById('lf-notes').value.trim(),
+    createdAt: new Date().toISOString(),
+  };
+  huntLog.unshift(entry);
+  localStorage.setItem('bryansHuntLog', JSON.stringify(huntLog));
+  closeHuntForm();
+  renderHuntLog();
+}
+
+function setHuntFilter(f, el) {
+  huntFilter = f;
+  document.querySelectorAll('#huntFilters .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderHuntLog();
+}
+
+function deleteHuntEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  huntLog = huntLog.filter(e => e.id !== id);
+  localStorage.setItem('bryansHuntLog', JSON.stringify(huntLog));
+  renderHuntLog();
+}
+
+function renderHuntLog() {
+  // Stats
+  const harvests = huntLog.filter(e => e.type === 'harvest');
+  const bucks = huntLog.filter(e => e.deerType === 'buck');
+  const huntersSet = [...new Set(huntLog.map(e => e.hunter))];
+  document.getElementById('huntStats').innerHTML = `
+    <div class="stat-box"><div class="stat-big">${huntLog.length}</div><div class="stat-lbl">Total Entries</div></div>
+    <div class="stat-box"><div class="stat-big">${harvests.length}</div><div class="stat-lbl">Harvests</div></div>
+    <div class="stat-box"><div class="stat-big">${bucks.length}</div><div class="stat-lbl">Bucks Seen</div></div>
+  `;
+
+  // Filter
+  let filtered = huntLog;
+  if (huntFilter === 'harvest') filtered = huntLog.filter(e => e.type === 'harvest');
+  else if (huntFilter === 'sighting') filtered = huntLog.filter(e => e.type === 'sighting');
+  else if (huntFilter === 'buck') filtered = huntLog.filter(e => e.deerType === 'buck');
+
+  if (filtered.length === 0) {
+    document.getElementById('huntLogEntries').innerHTML = `<div class="empty-state"><span class="e-icon">—</span>No entries yet.<br>Hit + Entry to log your first sighting or harvest.</div>`;
+    return;
+  }
+
+  const html = filtered.map(e => {
+    const isHarvest = e.type === 'harvest';
+    const deerLabel = e.deerType === 'buck' ? `Buck${e.points ? ` — ${e.points} pts` : ''}` : e.deerType === 'doe' ? 'Doe' : 'Unknown';
+    const distLabel = e.distance ? ` · ${e.distance} yds` : '';
+    const dateLabel = e.date ? new Date(e.date + 'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+    return `<div class="log-entry">
+      <div class="log-entry-head">
+        <div class="log-badge ${isHarvest?'harvest':'sighting'}">${isHarvest?'':''}</div>
+        <div class="log-meta">
+          <div class="log-who">${e.hunter}</div>
+          <div class="log-where">${e.stand} · ${e.time || ''}</div>
+        </div>
+        <div class="log-date-col">
+          <div>${dateLabel}</div>
+          <button class="btn-danger" onclick="deleteHuntEntry(${e.id})"></button>
+        </div>
+      </div>
+      <div class="log-deer-row">
+        <span class="deer-tag ${e.deerType}">${deerLabel}${distLabel}</span>
+        <span style="font-family:monospace;font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em">${isHarvest?'HARVEST':'SIGHTING'}</span>
+      </div>
+      ${e.notes ? `<div class="log-notes">${e.notes}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('huntLogEntries').innerHTML = html;
+}
+
+// 
+// CAM LOG
+// 
+function openCamForm() {
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('cf-date').value = today;
+  document.getElementById('cf-notes').value = '';
+  document.getElementById('cf-points').value = '';
+  document.getElementById('camForm').classList.remove('hidden');
+}
+function closeCamForm() { document.getElementById('camForm').classList.add('hidden'); }
+
+function saveCamEntry() {
+  const entry = {
+    id: Date.now(),
+    camera: document.getElementById('cf-camera').value.trim() || 'Unknown Cam',
+    stand: document.getElementById('cf-stand').value,
+    date: document.getElementById('cf-date').value,
+    time: document.getElementById('cf-time').value,
+    animal: document.getElementById('cf-animal').value,
+    points: parseInt(document.getElementById('cf-points').value) || 0,
+    notes: document.getElementById('cf-notes').value.trim(),
+    createdAt: new Date().toISOString(),
+  };
+  camLog.unshift(entry);
+  localStorage.setItem('bryansCamLog', JSON.stringify(camLog));
+  closeCamForm();
+  renderCamLog();
+}
+
+function setCamFilter(f, el) {
+  camFilter = f;
+  document.querySelectorAll('#camFilters .filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderCamLog();
+}
+
+function deleteCamEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  camLog = camLog.filter(e => e.id !== id);
+  localStorage.setItem('bryansCamLog', JSON.stringify(camLog));
+  renderCamLog();
+}
+
+function renderCamLog() {
+  const bucks = camLog.filter(e => e.animal === 'buck');
+  document.getElementById('camStats').innerHTML = `
+    <div class="stat-box"><div class="stat-big">${camLog.length}</div><div class="stat-lbl">Total</div></div>
+    <div class="stat-box"><div class="stat-big">${bucks.length}</div><div class="stat-lbl">Bucks</div></div>
+    <div class="stat-box"><div class="stat-big">${[...new Set(camLog.map(e=>e.camera))].length}</div><div class="stat-lbl">Cameras</div></div>
+  `;
+
+  let filtered = camLog;
+  if (camFilter !== 'all') filtered = camLog.filter(e => e.animal === camFilter);
+
+  if (filtered.length === 0) {
+    document.getElementById('camLogEntries').innerHTML = `<div class="empty-state"><span class="e-icon">—</span>No cam entries yet.<br>Add your first trail cam sighting.</div>`;
+    return;
+  }
+
+  const ANIMAL_ICONS = { buck:'', doe:'', fawn:'', turkey:'', hog:'', coyote:'', other:'' };
+  const html = filtered.map(e => {
+    const dateLabel = e.date ? new Date(e.date + 'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+    const ptLabel = (e.animal === 'buck' && e.points) ? ` · ${e.points} pts` : '';
+    return `<div class="cam-entry">
+      <div class="cam-entry-head">
+        <div>
+          <div class="cam-name">${e.animal.charAt(0).toUpperCase()+e.animal.slice(1)}${ptLabel}</div>
+          <div class="cam-date">${e.camera} · ${e.stand} · ${dateLabel} ${e.time||''}</div>
+        </div>
+        <button class="btn-danger" onclick="deleteCamEntry(${e.id})"></button>
+      </div>
+      ${e.notes ? `<div class="cam-detail">${e.notes}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('camLogEntries').innerHTML = html;
+}
+
+// 
+// ECOSYSTEM TAB
+// 
+const ECO_TYPE_ICONS = {
+  food_plot:'', water:'', bedding:'', mineral:'',
+  timber:'', brush:'', travel:'', other:''
+};
+const ECO_TYPE_LABELS = {
+  food_plot:'Food Plot', water:'Water Source', bedding:'Bedding Area', mineral:'Mineral/Salt',
+  timber:'Timber Stand Improvement', brush:'Brush Cover', travel:'Travel Corridor', other:'Improvement'
+};
+
+function openEcoForm() {
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('ef-date').value = today;
+  document.getElementById('ef-name').value = '';
+  document.getElementById('ef-notes').value = '';
+  document.getElementById('ecoForm').classList.remove('hidden');
+}
+function closeEcoForm() { document.getElementById('ecoForm').classList.add('hidden'); }
+
+function saveEcoEntry() {
+  const entry = {
+    id: Date.now(),
+    type: document.getElementById('ef-type').value,
+    status: document.getElementById('ef-status').value,
+    name: document.getElementById('ef-name').value.trim() || 'Untitled Project',
+    date: document.getElementById('ef-date').value,
+    notes: document.getElementById('ef-notes').value.trim(),
+    createdAt: new Date().toISOString(),
+  };
+  ecoLog.unshift(entry);
+  localStorage.setItem('bryansEcoLog', JSON.stringify(ecoLog));
+  closeEcoForm();
+  renderEco();
+}
+
+function deleteEcoEntry(id) {
+  if (!confirm('Delete this project?')) return;
+  ecoLog = ecoLog.filter(e => e.id !== id);
+  localStorage.setItem('bryansEcoLog', JSON.stringify(ecoLog));
+  renderEco();
+}
+
+function ecoScore() {
+  const done = ecoLog.filter(e => e.status === 'done');
+  const cats = { food_plot:0, water:0, bedding:0, mineral:0, timber:0, brush:0, travel:0, other:0 };
+  const maxCat = { food_plot:25, water:20, bedding:20, mineral:10, timber:15, brush:5, travel:5, other:5 };
+  done.forEach(e => { if (cats[e.type] !== undefined) cats[e.type]++; });
+  let total = 0;
+  Object.keys(maxCat).forEach(k => { total += Math.min(cats[k] * 10, maxCat[k]); });
+  return Math.min(99, total);
+}
+
+function renderEco() {
+  const score = ecoScore();
+  const done    = ecoLog.filter(e => e.status === 'done');
+  const planned = ecoLog.filter(e => e.status === 'planned');
+  const ideas   = ecoLog.filter(e => e.status === 'idea');
+
+  const scoreColor = score >= 70 ? 'var(--hunt)' : score >= 40 ? 'var(--amber)' : 'var(--skip)';
+  const scoreDesc = score >= 70 ? 'Thriving Habitat' : score >= 40 ? 'Developing' : 'Room to Grow';
+
+  // Suggestions based on what's missing
+  const suggestions = buildEcoSuggestions();
+
+  let html = `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;padding:16px;text-align:center">
+    <div style="font-family:Cormorant Garamond,serif;font-size:3rem;font-weight:700;line-height:1;color:${scoreColor}">${score}</div>
+    <div style="font-family:monospace;font-size:.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:4px">${scoreDesc} · Habitat Score</div>
+    <div style="margin-top:10px;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden">
+      <div style="height:100%;width:${score}%;background:${scoreColor};border-radius:3px;transition:width .8s"></div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:16px;margin-top:10px;font-family:monospace;font-size:.65rem;color:var(--text-dim)">
+      <span>${done.length} complete</span>
+      <span> ${planned.length} planned</span>
+      <span>${ideas.length} ideas</span>
+    </div>
+  </div>`;
+
+  // Suggestions
+  if (suggestions.length > 0) {
+    html += `<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-family:monospace;font-size:.62rem;color:var(--amber);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px">Recommendations for Your Property</div>
+      ${suggestions.map(s => `<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px">
+        
+        <div style="font-family:monospace;font-size:.68rem;color:var(--text-mid);line-height:1.6">${s.text}</div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  // Group entries by type
+  const groups = {};
+  ecoLog.forEach(e => {
+    if (!groups[e.type]) groups[e.type] = [];
+    groups[e.type].push(e);
+  });
+
+  if (ecoLog.length === 0) {
+    html += `<div class="empty-state"><span class="e-icon">—</span>No habitat projects yet.<br>Start logging food plots, water sources,<br>and habitat improvements.</div>`;
+  } else {
+    Object.keys(groups).forEach(type => {
+      const items = groups[type];
+      html += `<div class="eco-category">
+        <div class="eco-cat-head">
+          <div class="eco-cat-name">${ECO_TYPE_ICONS[type]} ${ECO_TYPE_LABELS[type]}</div>
+          <span style="font-family:monospace;font-size:.62rem;color:var(--text-dim)">${items.length} project${items.length>1?'s':''}</span>
+        </div>
+        ${items.map(item => `<div class="eco-item">
+          <div class="eco-item-info">
+            <div class="eco-item-name">${item.name}</div>
+            <div class="eco-item-detail">${item.date ? new Date(item.date+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : ''}${item.notes ? ' · ' + item.notes.slice(0,80) + (item.notes.length>80?'…':'') : ''}</div>
+          </div>
+          <span class="eco-status ${item.status}">${item.status}</span>
+          <button class="btn-danger" onclick="deleteEcoEntry(${item.id})" style="margin-left:6px"></button>
+        </div>`).join('')}
+      </div>`;
+    });
+  }
+
+  document.getElementById('ecoContent').innerHTML = html;
+}
+
+function buildEcoSuggestions() {
+  const types = ecoLog.map(e => e.type);
+  const s = [];
+  if (!types.includes('food_plot')) s.push({ icon:null, text:'Plant a food plot — clover, brassicas, or cereal rye thrive in NE Oklahoma and attract deer all season' });
+  if (!types.includes('water')) s.push({ icon:null, text:'Add or improve a water source — a simple pond or stock tank can dramatically increase property use' });
+  if (!types.includes('bedding')) s.push({ icon:null, text:'Create thermal bedding cover — thickets of switchgrass, cedars, or brush piles give deer security and warmth' });
+  if (!types.includes('mineral')) s.push({ icon:null, text:'Set mineral/salt licks near trail cams to monitor bucks and support antler growth spring through summer' });
+  if (!types.includes('travel')) s.push({ icon:null, text:'Identify and improve travel corridors — connect bedding to food along ridge lines and creek bottoms' });
+  return s.slice(0, 3);
+}
+
+// 
+// SEASON CALENDAR
+// 
+const SEASON_EVENTS = [
+  { date:[9,1],   name:'Archery Season Opens', icon:null, desc:'Statewide archery deer season begins' },
+  { date:[10,1],  name:'Pre-Rut Scraping',     icon:null, desc:'Bucks begin making scrapes and rubs' },
+  { date:[10,16], name:'Youth Gun Season',     icon:null, desc:'Youth hunters may take any deer' },
+  { date:[10,21], name:'Pre-Rut Peaks',        icon:null, desc:'Buck activity surges, scrapes everywhere' },
+  { date:[10,24], name:'Muzzleloader Season',  icon:null, desc:'Muzzleloader season runs through Nov 1' },
+  { date:[11,1],  name:'Seeking Phase',        icon:null, desc:'Bucks cruising, chasing begins — all-day sits' },
+  { date:[11,9],  name:'Peak Rut / Lockdown',  icon:null, desc:'Bucks locked to does — hunt does\' bedding areas' },
+  { date:[11,19], name:'Post-Rut',             icon:null, desc:'Bucks worn out, recovering near food' },
+  { date:[11,21], name:'Gun Season Opens',     icon:null, desc:'Modern firearms deer season begins' },
+  { date:[12,6],  name:'Gun Season Closes',    icon:null, desc:'Last day of modern firearms season' },
+  { date:[12,10], name:'Second Rut',           icon:null, desc:'Unbred does cycle again — can be productive' },
+  { date:[1,15],  name:'Archery Season Closes',icon:null, desc:'Last day of archery season' },
+];
+
+function renderCalendar() {
+  const now = new Date();
+  const html = SEASON_EVENTS.map(ev => {
+    const evDate = new Date(YEAR, ev.date[0]-1, ev.date[1]);
+    const isPast = evDate < now && !(evDate.getDate() === now.getDate() && evDate.getMonth() === now.getMonth());
+    const isToday = evDate.getDate() === now.getDate() && evDate.getMonth() === now.getMonth();
+    const isActive = !isPast && evDate >= now;
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `<div class="cal-event ${isPast?'past':''} ${isToday?'today':''} ${isActive&&!isToday?'active-now':''}">
+      <div class="cal-date-col">
+        <div class="cal-month">${months[ev.date[0]-1]}</div>
+        <div class="cal-day">${ev.date[1]}</div>
+      </div>
+      <div class="cal-info">
+        <div class="cal-event-name">${ev.name}</div>
+        <div class="cal-event-desc">${ev.desc}</div>
+      </div>
+      
+    </div>`;
+  }).join('');
+  document.getElementById('calContent').innerHTML = html;
+}
+
+// 
+// INIT
+// 
+function init() {
+  // Hunter selection
+  if (!currentHunter || !hunters.includes(currentHunter)) {
+    renderHunterModal();
+    document.getElementById('hunterModal').classList.remove('hidden');
+  } else {
+    document.getElementById('hunterName').textContent = currentHunter;
+  }
+
+  // Notify button state
+  if (Notification.permission === 'granted') {
+    document.getElementById('notifyBtn').textContent = ' Enabled';
+  }
+
+  // Initial render
+  renderCalendar();
+  renderEco();
+  renderHuntLog();
+  renderCamLog();
+  fetchWeather();
+}
+
+init();
+</script>
+</body>
+</html>
