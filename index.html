@@ -449,6 +449,143 @@ header {
 /* empty state */
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: .72rem; line-height: 1.8; }
 .empty-state .e-icon { font-size: 2rem; display: block; margin-bottom: 10px; }
+
+/* ===== ACTIVE HUNT MODE ===== */
+.hunt-mode-banner {
+  background: var(--hunt); color: #fff; padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px; border-radius: 8px; margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: .7rem;
+}
+.hunt-live-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: #7cfc00;
+  animation: blink 1.2s infinite; flex-shrink: 0;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.hunt-mode-label { flex: 1; font-weight: 700; letter-spacing: .06em; }
+.hunt-mode-timer { margin-left: auto; }
+.start-hunt-card {
+  background: var(--bg2); border: 2px dashed var(--border2); border-radius: 12px;
+  padding: 28px 20px; text-align: center; margin-bottom: 14px;
+}
+.start-hunt-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; }
+.start-hunt-card p { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--text-dim); margin-bottom: 18px; line-height: 1.6; }
+.btn-start-hunt {
+  background: var(--hunt); color: #fff; border: none; border-radius: 8px;
+  padding: 14px 32px; font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+  font-weight: 700; cursor: pointer; letter-spacing: .04em; width: 100%;
+}
+.btn-stop-hunt {
+  background: var(--skip); color: #fff; border: none; border-radius: 8px;
+  padding: 10px 20px; font-family: 'JetBrains Mono', monospace; font-size: .7rem;
+  font-weight: 700; cursor: pointer; letter-spacing: .06em;
+}
+.hunt-waypoint-btn {
+  background: var(--bg3); border: 1.5px solid var(--border2); border-radius: 8px;
+  padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: .65rem;
+  color: var(--amber); cursor: pointer; text-align: center; width: 100%;
+  margin-bottom: 10px;
+}
+.hunt-stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;
+}
+.hunt-stat-cell {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 8px; text-align: center;
+}
+.hunt-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 700; color: var(--amber); }
+.hunt-stat-lbl { font-family: 'JetBrains Mono', monospace; font-size: .58rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }
+.hunt-map-mini { width: 100%; height: 220px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); }
+.waypoint-list { margin-top: 10px; }
+.waypoint-item {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 12px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px;
+  font-family: 'JetBrains Mono', monospace; font-size: .65rem;
+}
+.waypoint-type { color: var(--amber); font-weight: 700; flex-shrink: 0; }
+.waypoint-time { color: var(--text-dim); margin-left: auto; }
+
+/* ===== HUNTER LOCKER ===== */
+.locker-hunter-select {
+  display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px;
+}
+.locker-hunter-btn {
+  flex: 0 0 auto; background: var(--bg3); border: 1.5px solid var(--border2);
+  border-radius: 20px; padding: 7px 16px; font-family: 'Cormorant Garamond', serif;
+  font-size: .9rem; font-weight: 700; color: var(--text-mid); cursor: pointer; white-space: nowrap;
+}
+.locker-hunter-btn.active { background: var(--amber); border-color: var(--amber); color: #fff; }
+.locker-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+.locker-section-head {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.locker-section-title { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; color: var(--text-bright); }
+.locker-add-btn { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--amber); background: none; border: none; cursor: pointer; }
+.locker-row {
+  padding: 9px 14px; border-bottom: 1px solid var(--border); display: flex;
+  align-items: center; gap: 10px;
+}
+.locker-row:last-child { border-bottom: none; }
+.locker-row-label { font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--text-bright); flex: 1; }
+.locker-row-val { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--text-dim); }
+.locker-season-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; padding: 12px 14px; }
+.locker-stat { text-align: center; }
+.locker-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; color: var(--amber); line-height: 1; }
+.locker-stat-lbl { font-family: 'JetBrains Mono', monospace; font-size: .58rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
+.range-badge {
+  display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .6rem;
+  padding: 3px 8px; border-radius: 4px; background: rgba(192,92,16,.1);
+  border: 1px solid rgba(192,92,16,.3); color: var(--amber);
+}
+.past-hunt-item {
+  padding: 10px 14px; border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.past-hunt-item:last-child { border-bottom: none; }
+.past-hunt-date { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--text-dim); }
+.past-hunt-summary { font-family: 'Cormorant Garamond', serif; font-size: .95rem; font-weight: 600; color: var(--text-bright); margin-top: 2px; }
+
+/* ===== TARGET PRACTICE / RANGE ===== */
+.range-form-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px; margin-bottom: 14px;
+}
+.range-form-title { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; color: var(--text-bright); margin-bottom: 12px; }
+.range-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.range-effective-display {
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 14px; display: flex; gap: 20px;
+}
+.range-eff-item { text-align: center; flex: 1; }
+.range-eff-num { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; color: var(--amber); line-height: 1; }
+.range-eff-unit { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--text-dim); }
+.range-eff-label { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; margin-top: 3px; }
+.practice-log-item {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 12px;
+}
+.practice-weapon-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: .6rem; padding: 4px 8px;
+  border-radius: 4px; flex-shrink: 0;
+}
+.practice-weapon-badge.rifle { background: rgba(42,96,168,.1); border: 1px solid rgba(42,96,168,.3); color: var(--blue); }
+.practice-weapon-badge.bow { background: rgba(58,104,24,.1); border: 1px solid rgba(58,104,24,.3); color: var(--hunt); }
+.practice-dist { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; color: var(--text-bright); }
+.practice-acc { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--text-dim); }
+.practice-date { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--text-dim); margin-left: auto; }
+
+/* ===== POST-HUNT REVIEW MODAL ===== */
+#postHuntModal .modal-box { max-height: 90vh; overflow-y: auto; }
+.review-section-title {
+  font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: .08em; margin: 14px 0 8px;
+}
+.review-stars { display: flex; gap: 8px; margin-bottom: 10px; }
+.star-btn {
+  font-size: 1.4rem; background: none; border: none; cursor: pointer; opacity: .3;
+  transition: opacity .1s;
+}
+.star-btn.lit { opacity: 1; }
 </style>
 </head>
 <body>
@@ -656,53 +793,61 @@ header {
  -->
 <header>
   <div class="header-badge">
-    <!-- Whitetail deer head + rack silhouette, styled after classic scoring illustration -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110" width="40" height="44">
-      <!-- === LEFT ANTLER === -->
-      <!-- main beam L: rises from skull, sweeps out-left and up -->
-      <path d="M43 52 C40 44 36 36 30 27 C24 18 16 12 10 6" stroke="#c05c10" stroke-width="3" stroke-linecap="round" fill="none"/>
-      <!-- brow tine L (G1): forward from low beam -->
-      <path d="M38 46 C34 43 28 42 22 43" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <!-- G2: up from mid beam -->
-      <path d="M30 30 C27 24 25 17 24 10" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <!-- G3: cluster near top -->
-      <path d="M20 16 C17 11 15 5 14 2" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-      <!-- G4: adjacent to G3 -->
-      <path d="M16 14 C19 9 21 4 22 1" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-      <!-- G5: tip fork -->
-      <path d="M12 10 C10 6 11 2 13 0" stroke="#c05c10" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+    <!-- Original whitetail buck outline, based on face-on 3/4 angle reference -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 132" width="42" height="48">
+      <!-- LEFT ANTLER — main beam sweeps wide out-left then up -->
+      <path d="M46 50 C42 43 36 34 27 24 C19 15 10 8 3 2" stroke="#c05c10" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+      <!-- G1 brow tine: forward/up from lower beam -->
+      <path d="M40 46 C33 41 25 39 16 42" stroke="#c05c10" stroke-width="2.1" stroke-linecap="round" fill="none"/>
+      <!-- G2: long tine up from mid beam -->
+      <path d="M26 28 C23 20 21 12 19 4" stroke="#c05c10" stroke-width="1.9" stroke-linecap="round" fill="none"/>
+      <!-- G3 tine near upper beam -->
+      <path d="M13 16 C10 9 8 4 7 0" stroke="#c05c10" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+      <!-- G4 / tip fork left branch -->
+      <path d="M7 10 C4 6 3 2 4 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <!-- G5 / tip fork right branch -->
+      <path d="M10 8 C13 4 14 1 12 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-      <!-- === RIGHT ANTLER (mirror) === -->
-      <!-- main beam R -->
-      <path d="M57 52 C60 44 64 36 70 27 C76 18 84 12 90 6" stroke="#c05c10" stroke-width="3" stroke-linecap="round" fill="none"/>
-      <!-- brow tine R (G1) -->
-      <path d="M62 46 C66 43 72 42 78 43" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <!-- RIGHT ANTLER — mirror, sweeps wide out-right -->
+      <path d="M74 50 C78 43 84 34 93 24 C101 15 110 8 117 2" stroke="#c05c10" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+      <!-- G1 R -->
+      <path d="M80 46 C87 41 95 39 104 42" stroke="#c05c10" stroke-width="2.1" stroke-linecap="round" fill="none"/>
       <!-- G2 R -->
-      <path d="M70 30 C73 24 75 17 76 10" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M94 28 C97 20 99 12 101 4" stroke="#c05c10" stroke-width="1.9" stroke-linecap="round" fill="none"/>
       <!-- G3 R -->
-      <path d="M80 16 C83 11 85 5 86 2" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-      <!-- G4 R -->
-      <path d="M84 14 C81 9 79 4 78 1" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-      <!-- G5 R tip -->
-      <path d="M88 10 C90 6 89 2 87 0" stroke="#c05c10" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      <path d="M107 16 C110 9 112 4 113 0" stroke="#c05c10" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+      <!-- G4 R left branch -->
+      <path d="M113 10 C116 6 117 2 116 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <!-- G5 R right branch -->
+      <path d="M110 8 C107 4 106 1 108 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-      <!-- === DEER HEAD === -->
-      <!-- skull/pedestal where antlers meet head -->
-      <ellipse cx="50" cy="55" rx="7" ry="4" fill="#c05c10" opacity="0.35"/>
-      <!-- head shape: rounded oval, slightly tapered toward muzzle -->
-      <ellipse cx="50" cy="76" rx="16" ry="19" fill="none" stroke="#c05c10" stroke-width="2"/>
-      <!-- muzzle bump at bottom -->
-      <path d="M42 92 Q50 100 58 92" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
-      <!-- nose -->
-      <ellipse cx="50" cy="95" rx="5" ry="3" fill="none" stroke="#c05c10" stroke-width="1.6"/>
-      <!-- left eye -->
-      <circle cx="42" cy="72" r="2.5" fill="none" stroke="#c05c10" stroke-width="1.6"/>
-      <!-- right eye -->
-      <circle cx="58" cy="72" r="2.5" fill="none" stroke="#c05c10" stroke-width="1.6"/>
-      <!-- left ear -->
-      <path d="M34 66 C28 60 27 52 31 50 C35 48 38 54 36 62 Z" fill="none" stroke="#c05c10" stroke-width="2" stroke-linejoin="round"/>
-      <!-- right ear -->
-      <path d="M66 66 C72 60 73 52 69 50 C65 48 62 54 64 62 Z" fill="none" stroke="#c05c10" stroke-width="2" stroke-linejoin="round"/>
+      <!-- PEDICLE RIDGE — skull top where antlers root -->
+      <path d="M42 54 Q46 51 50 51 Q60 51 74 54" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+
+      <!-- HEAD OUTLINE — rounded face, wide at brow, tapers to blocky chin -->
+      <path d="M38 62 C34 66 32 76 33 86 C35 97 42 106 60 110 C78 106 85 97 87 86 C88 76 86 66 82 62 C78 56 64 53 60 53 C56 53 42 56 38 62 Z" stroke="#c05c10" stroke-width="2.2" fill="none"/>
+
+      <!-- LEFT EAR — large flap, extends wide left -->
+      <path d="M38 68 C29 62 24 52 28 46 C32 42 40 48 40 60 Z" stroke="#c05c10" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <!-- RIGHT EAR -->
+      <path d="M82 68 C91 62 96 52 92 46 C88 42 80 48 80 60 Z" stroke="#c05c10" stroke-width="2" fill="none" stroke-linejoin="round"/>
+
+      <!-- LEFT EYE -->
+      <circle cx="48" cy="74" r="3" fill="none" stroke="#c05c10" stroke-width="1.6"/>
+      <!-- RIGHT EYE -->
+      <circle cx="72" cy="74" r="3" fill="none" stroke="#c05c10" stroke-width="1.6"/>
+
+      <!-- FACE PLANE — subtle brow ridge line -->
+      <path d="M44 66 C50 64 70 64 76 66" stroke="#c05c10" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
+      <!-- MUZZLE / WHITE PATCH outline -->
+      <ellipse cx="60" cy="97" rx="11" ry="9" fill="none" stroke="#c05c10" stroke-width="1.6"/>
+      <!-- NOSE PAD -->
+      <ellipse cx="60" cy="101" rx="6.5" ry="4.5" fill="none" stroke="#c05c10" stroke-width="1.9"/>
+
+      <!-- NECK — thick, visible below chin -->
+      <path d="M46 112 C43 120 42 127 44 132" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <path d="M74 112 C77 120 78 127 76 132" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
     </svg>
   </div>
   <div class="header-text">
@@ -722,6 +867,9 @@ header {
   <button class="tab-nav-btn" onclick="switchTab('camlog',this)">Cam Log</button>
   <button class="tab-nav-btn" onclick="switchTab('eco',this)">Ecosystem</button>
   <button class="tab-nav-btn" onclick="switchTab('calendar',this)">Season</button>
+  <button class="tab-nav-btn" onclick="switchTab('hunt',this)">Hunt</button>
+  <button class="tab-nav-btn" onclick="switchTab('locker',this)">Locker</button>
+  <button class="tab-nav-btn" onclick="switchTab('range',this)">Range</button>
 </nav>
 
 <!-- 
@@ -802,7 +950,129 @@ header {
   <div id="calContent"></div>
 </div>
 
+<!-- ACTIVE HUNT PANE -->
+<div class="tab-pane" id="pane-hunt">
+  <div id="huntActiveContent">
+    <!-- populated by JS depending on hunt state -->
+  </div>
+</div>
+
+<!-- LOCKER PANE -->
+<div class="tab-pane" id="pane-locker">
+  <div class="locker-hunter-select" id="lockerHunterTabs"></div>
+  <div id="lockerContent"></div>
+</div>
+
+<!-- RANGE / TARGET PRACTICE PANE -->
+<div class="tab-pane" id="pane-range">
+  <div class="range-form-card">
+    <div class="range-form-title">Log Practice Session</div>
+    <div class="range-form-grid">
+      <div class="form-group">
+        <label class="form-label">Weapon</label>
+        <select class="form-select" id="rng-weapon" onchange="updateRangeCalc()">
+          <option value="rifle">Rifle</option>
+          <option value="bow">Bow / Crossbow</option>
+          <option value="muzzle">Muzzleloader</option>
+          <option value="pistol">Pistol</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date" id="rng-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Distance (yds)</label>
+        <input class="form-input" type="number" id="rng-dist" placeholder="50" min="5" max="1000" oninput="updateRangeCalc()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Groups on Target (%)</label>
+        <input class="form-input" type="number" id="rng-acc" placeholder="80" min="0" max="100" oninput="updateRangeCalc()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Group Size (inches)</label>
+        <input class="form-input" type="number" id="rng-group" placeholder="3" step="0.5" oninput="updateRangeCalc()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rounds / Arrows</label>
+        <input class="form-input" type="number" id="rng-shots" placeholder="20" min="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea class="form-textarea" id="rng-notes" placeholder="Wind conditions, rest used, ammo…" rows="2"></textarea>
+    </div>
+    <button class="btn-primary" style="width:100%" onclick="saveRangeSession()">Save Session</button>
+  </div>
+  <div class="range-effective-display" id="rangeCalcDisplay" style="display:none">
+    <div class="range-eff-item">
+      <div class="range-eff-num" id="effRangeNum">—</div>
+      <div class="range-eff-unit">yards</div>
+      <div class="range-eff-label">Effective Range</div>
+    </div>
+    <div class="range-eff-item">
+      <div class="range-eff-num" id="skillLevel">—</div>
+      <div class="range-eff-label">Skill Level</div>
+    </div>
+    <div class="range-eff-item">
+      <div class="range-eff-num" id="recStand">—</div>
+      <div class="range-eff-label">Best Stand</div>
+    </div>
+  </div>
+  <div id="rangeRecommendation" style="margin-bottom:14px"></div>
+  <div class="log-header" style="margin-bottom:10px">
+    <div class="log-title" style="font-size:.85rem">Practice Log</div>
+  </div>
+  <div id="rangePracticeLog"></div>
+</div>
+
 </div><!-- .main-view -->
+
+<!-- POST-HUNT REVIEW MODAL -->
+<div class="form-modal hidden" id="postHuntModal">
+  <div class="form-sheet" id="postHuntModalBox">
+    <h2>Hunt Review</h2>
+    <div class="review-section-title">Duration</div>
+    <div id="reviewDuration" style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text-bright);margin-bottom:8px"></div>
+    <div class="review-section-title">Stand / Location</div>
+    <select class="form-select" id="review-stand">
+      <option value="">— select stand —</option>
+    </select>
+    <div class="review-section-title">Conditions</div>
+    <div id="reviewConditions" style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text-dim);line-height:1.8;margin-bottom:8px"></div>
+    <div class="review-section-title">Sightings</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Bucks Seen</label>
+        <input class="form-input" type="number" id="review-bucks" value="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Does Seen</label>
+        <input class="form-input" type="number" id="review-does" value="0" min="0">
+      </div>
+    </div>
+    <div class="review-section-title">Shot Taken?</div>
+    <select class="form-select" id="review-shot" style="margin-bottom:10px">
+      <option value="none">No shot</option>
+      <option value="miss">Shot — missed</option>
+      <option value="harvest">Harvest</option>
+    </select>
+    <div class="review-section-title">Overall Rating</div>
+    <div class="review-stars" id="reviewStars">
+      <button class="star-btn" onclick="setReviewStar(1)">★</button>
+      <button class="star-btn" onclick="setReviewStar(2)">★</button>
+      <button class="star-btn" onclick="setReviewStar(3)">★</button>
+      <button class="star-btn" onclick="setReviewStar(4)">★</button>
+      <button class="star-btn" onclick="setReviewStar(5)">★</button>
+    </div>
+    <div class="review-section-title">Notes</div>
+    <textarea class="form-textarea" id="review-notes" placeholder="What happened, what did you learn…" rows="3"></textarea>
+    <div class="form-actions">
+      <button class="btn-secondary" onclick="closePostHuntModal()">Skip</button>
+      <button class="btn-primary" onclick="savePostHuntReview()">Save Review</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // 
@@ -1909,9 +2179,509 @@ function init() {
   renderHuntLog();
   renderCamLog();
   fetchWeather();
+  renderLockerTab();
+  renderRangeTab();
+  renderHuntTab();
+  initRangeDate();
 }
 
 init();
+
+// ============================================================
+// ACTIVE HUNT MODE — GPS TRACKING
+// ============================================================
+let activeHunt = null;      // { startTime, watchId, track:[], waypoints:[], huntMap, trackLayer, posMarker, timer }
+let huntsHistory = (() => { try { return JSON.parse(localStorage.getItem('bryansHuntHistory')||'[]'); } catch(e){ return []; } })();
+let practiceSessions = (() => { try { return JSON.parse(localStorage.getItem('bryansRangeSessions')||'[]'); } catch(e){ return []; } })();
+let reviewStarVal = 0;
+
+function renderHuntTab() {
+  const el = document.getElementById('huntActiveContent');
+  if (!el) return;
+  if (activeHunt) {
+    el.innerHTML = renderActiveHuntUI();
+  } else {
+    el.innerHTML = renderIdleHuntUI();
+  }
+}
+
+function renderIdleHuntUI() {
+  const today = weatherData && weatherData[0];
+  const condHtml = today ? `<p><strong>${today.label}</strong> &nbsp;·&nbsp; ${today.temp}°F &nbsp;·&nbsp; Wind ${today.windDir} ${today.wind}mph &nbsp;·&nbsp; Shoot light ${today.shootStart}</p>` : '';
+  return `
+  <div class="start-hunt-card">
+    <h3>Ready to Hunt?</h3>
+    ${condHtml}
+    <p>Start a hunt session to record your GPS trail, log waypoints, and generate a post-hunt review.</p>
+    <button class="btn-start-hunt" onclick="startHunt()">▶ Start Hunt</button>
+  </div>
+  ${huntsHistory.length ? '<div style="margin-top:4px"><div class="log-header" style="margin-bottom:8px"><div class="log-title" style="font-size:.85rem">Past Hunts</div></div>' + renderPastHunts() + '</div>' : ''}
+  `;
+}
+
+function renderActiveHuntUI() {
+  const elapsed = activeHunt ? msToHMS(Date.now() - activeHunt.startTime) : '--:--:--';
+  const pts = activeHunt ? activeHunt.track.length : 0;
+  const dist = activeHunt ? (calcTrackDistance(activeHunt.track)/1609.34).toFixed(2) : '0.00';
+  const wps = activeHunt ? activeHunt.waypoints.length : 0;
+  return `
+  <div class="hunt-mode-banner">
+    <div class="hunt-live-dot"></div>
+    <div class="hunt-mode-label">HUNT IN PROGRESS</div>
+    <div class="hunt-mode-timer" id="huntTimerDisplay">${elapsed}</div>
+    <button class="btn-stop-hunt" onclick="stopHunt()">■ End</button>
+  </div>
+  <div class="hunt-stats-row">
+    <div class="hunt-stat-cell"><div class="hunt-stat-val" id="huntDistVal">${dist}</div><div class="hunt-stat-lbl">Miles</div></div>
+    <div class="hunt-stat-cell"><div class="hunt-stat-val" id="huntPtsVal">${pts}</div><div class="hunt-stat-lbl">GPS Pts</div></div>
+    <div class="hunt-stat-cell"><div class="hunt-stat-val" id="huntWPVal">${wps}</div><div class="hunt-stat-lbl">Waypoints</div></div>
+  </div>
+  <div class="hunt-map-mini" id="huntMapContainer"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+    <button class="hunt-waypoint-btn" onclick="dropWaypoint('🦌 Buck')">🦌 Buck</button>
+    <button class="hunt-waypoint-btn" onclick="dropWaypoint('🌿 Rub')">🌿 Rub</button>
+    <button class="hunt-waypoint-btn" onclick="dropWaypoint('⭕ Scrape')">⭕ Scrape</button>
+  </div>
+  <div class="waypoint-list" id="waypointList">${renderWaypointList()}</div>
+  `;
+}
+
+function renderWaypointList() {
+  if (!activeHunt || !activeHunt.waypoints.length) return '<div class="empty-state" style="padding:10px 0"><span style="font-size:.65rem">No waypoints yet — tap a button above to drop one</span></div>';
+  return activeHunt.waypoints.map(w => `
+    <div class="waypoint-item">
+      <div class="waypoint-type">${w.label}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text-dim)">${w.lat.toFixed(5)}, ${w.lon.toFixed(5)}</div>
+      <div class="waypoint-time">${new Date(w.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</div>
+    </div>`).join('');
+}
+
+function renderPastHunts() {
+  return huntsHistory.slice(0,10).map(h => {
+    const d = new Date(h.startTime);
+    const dur = msToHMS(h.duration);
+    const dist = (h.distMiles||0).toFixed(2);
+    return `<div class="past-hunt-item" onclick="viewPastHunt(${h.id})">
+      <div class="past-hunt-date">${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · ${dur} · ${dist}mi</div>
+      <div class="past-hunt-summary">${h.bucks||0} bucks · ${h.does||0} does · ${h.waypoints||0} waypoints${h.shot==='harvest'?' · 🎯 Harvest':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function startHunt() {
+  if (!navigator.geolocation) { alert('Geolocation not available on this device.'); return; }
+  activeHunt = {
+    id: Date.now(),
+    startTime: Date.now(),
+    watchId: null,
+    track: [],
+    waypoints: [],
+    huntMap: null,
+    trackLayer: null,
+    posMarker: null,
+  };
+  activeHunt.watchId = navigator.geolocation.watchPosition(onGpsUpdate, onGpsError, {
+    enableHighAccuracy: true, maximumAge: 5000, timeout: 15000
+  });
+  activeHunt.timer = setInterval(updateHuntStats, 1000);
+  renderHuntTab();
+  setTimeout(initHuntMap, 300);
+}
+
+function stopHunt() {
+  if (!activeHunt) return;
+  navigator.geolocation.clearWatch(activeHunt.watchId);
+  clearInterval(activeHunt.timer);
+  const hunt = {
+    id: activeHunt.id,
+    startTime: activeHunt.startTime,
+    endTime: Date.now(),
+    duration: Date.now() - activeHunt.startTime,
+    track: activeHunt.track,
+    waypoints: activeHunt.waypoints,
+    distMiles: parseFloat((calcTrackDistance(activeHunt.track)/1609.34).toFixed(2)),
+  };
+  // Show post-hunt review
+  openPostHuntModal(hunt);
+  activeHunt = null;
+  renderHuntTab();
+}
+
+function onGpsUpdate(pos) {
+  if (!activeHunt) return;
+  const pt = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy, t: Date.now() };
+  activeHunt.track.push(pt);
+  updateHuntMap(pt);
+  updateHuntStats();
+}
+
+function onGpsError(err) {
+  console.warn('GPS error', err.message);
+}
+
+function updateHuntStats() {
+  if (!activeHunt) return;
+  const elEl = document.getElementById('huntTimerDisplay');
+  const distEl = document.getElementById('huntDistVal');
+  const ptsEl = document.getElementById('huntPtsVal');
+  const wpEl = document.getElementById('huntWPVal');
+  if (elEl) elEl.textContent = msToHMS(Date.now() - activeHunt.startTime);
+  if (distEl) distEl.textContent = (calcTrackDistance(activeHunt.track)/1609.34).toFixed(2);
+  if (ptsEl) ptsEl.textContent = activeHunt.track.length;
+  if (wpEl) wpEl.textContent = activeHunt.waypoints.length;
+}
+
+function initHuntMap() {
+  const container = document.getElementById('huntMapContainer');
+  if (!container || activeHunt.huntMap) return;
+  const m = L.map('huntMapContainer', { zoomControl: false, attributionControl: false });
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{ maxZoom:20 }).addTo(m);
+  m.setView([LAT, LON], 16);
+  activeHunt.huntMap = m;
+  activeHunt.trackLayer = L.polyline([], { color:'#7cfc00', weight:3 }).addTo(m);
+}
+
+function updateHuntMap(pt) {
+  if (!activeHunt || !activeHunt.huntMap) return;
+  const ll = [pt.lat, pt.lon];
+  activeHunt.trackLayer.addLatLng(ll);
+  if (activeHunt.posMarker) {
+    activeHunt.posMarker.setLatLng(ll);
+  } else {
+    const icon = L.divIcon({ html:'<div style="width:14px;height:14px;border-radius:50%;background:#7cfc00;border:2px solid #fff;box-shadow:0 0 6px rgba(124,252,0,.8)"></div>', iconSize:[14,14], iconAnchor:[7,7], className:'' });
+    activeHunt.posMarker = L.marker(ll, { icon }).addTo(activeHunt.huntMap);
+  }
+  activeHunt.huntMap.panTo(ll);
+}
+
+function dropWaypoint(label) {
+  if (!activeHunt || !activeHunt.track.length) {
+    alert('Waiting for GPS fix — try again in a moment.');
+    return;
+  }
+  const last = activeHunt.track[activeHunt.track.length-1];
+  const wp = { label, lat: last.lat, lon: last.lon, time: Date.now() };
+  activeHunt.waypoints.push(wp);
+  if (activeHunt.huntMap) {
+    const icon = L.divIcon({ html:`<div style="font-size:1.4rem;line-height:1">${label.split(' ')[0]}</div>`, iconSize:[30,30], iconAnchor:[15,15], className:'' });
+    L.marker([last.lat, last.lon], { icon }).addTo(activeHunt.huntMap);
+  }
+  document.getElementById('waypointList').innerHTML = renderWaypointList();
+  document.getElementById('huntWPVal').textContent = activeHunt.waypoints.length;
+}
+
+function calcTrackDistance(track) {
+  let d = 0;
+  for (let i=1; i<track.length; i++) {
+    d += haversineMeters(track[i-1].lat, track[i-1].lon, track[i].lat, track[i].lon);
+  }
+  return d;
+}
+
+function haversineMeters(lat1,lon1,lat2,lon2) {
+  const R=6371000, toR=Math.PI/180;
+  const dLat=(lat2-lat1)*toR, dLon=(lon2-lon1)*toR;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*toR)*Math.cos(lat2*toR)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+function msToHMS(ms) {
+  const s=Math.floor(ms/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sc=s%60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sc).padStart(2,'0')}`;
+}
+
+// ============================================================
+// POST-HUNT REVIEW MODAL
+// ============================================================
+let pendingHuntForReview = null;
+
+function openPostHuntModal(hunt) {
+  pendingHuntForReview = hunt;
+  reviewStarVal = 0;
+  document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('lit'));
+  document.getElementById('reviewDuration').textContent = msToHMS(hunt.duration) + '  ·  ' + hunt.distMiles + ' miles  ·  ' + hunt.waypoints.length + ' waypoints';
+  // Conditions from weather
+  const today = weatherData && weatherData[0];
+  document.getElementById('reviewConditions').innerHTML = today
+    ? `${today.temp}°F · Wind ${today.windDir} ${today.wind}mph · ${today.desc}` : '—';
+  // Populate stand select
+  const sel = document.getElementById('review-stand');
+  sel.innerHTML = '<option value="">— select stand —</option>' + STANDS.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+  document.getElementById('review-bucks').value = 0;
+  document.getElementById('review-does').value = 0;
+  document.getElementById('review-shot').value = 'none';
+  document.getElementById('review-notes').value = '';
+  document.getElementById('postHuntModal').classList.remove('hidden');
+}
+
+function closePostHuntModal() {
+  document.getElementById('postHuntModal').classList.add('hidden');
+  if (pendingHuntForReview) {
+    huntsHistory.unshift(pendingHuntForReview);
+    localStorage.setItem('bryansHuntHistory', JSON.stringify(huntsHistory.slice(0,100)));
+    pendingHuntForReview = null;
+  }
+  renderHuntTab();
+}
+
+function setReviewStar(n) {
+  reviewStarVal = n;
+  document.querySelectorAll('.star-btn').forEach((b,i) => b.classList.toggle('lit', i < n));
+}
+
+function savePostHuntReview() {
+  if (!pendingHuntForReview) return;
+  const hunt = pendingHuntForReview;
+  hunt.stand   = document.getElementById('review-stand').value;
+  hunt.bucks   = parseInt(document.getElementById('review-bucks').value)||0;
+  hunt.does    = parseInt(document.getElementById('review-does').value)||0;
+  hunt.shot    = document.getElementById('review-shot').value;
+  hunt.rating  = reviewStarVal;
+  hunt.notes   = document.getElementById('review-notes').value.trim();
+  hunt.hunter  = currentHunter;
+  huntsHistory.unshift(hunt);
+  localStorage.setItem('bryansHuntHistory', JSON.stringify(huntsHistory.slice(0,100)));
+  pendingHuntForReview = null;
+  document.getElementById('postHuntModal').classList.add('hidden');
+  renderHuntTab();
+  renderLockerTab(); // update stats
+}
+
+// ============================================================
+// HUNTER LOCKER
+// ============================================================
+let lockerHunterView = null;
+let lockerData = (() => { try { return JSON.parse(localStorage.getItem('bryansLockerData')||'{}'); } catch(e){ return {}; } })();
+
+function getLockerForHunter(name) {
+  if (!lockerData[name]) lockerData[name] = { gear:[], weapons:[], harvests:[] };
+  return lockerData[name];
+}
+
+function saveLockerData() {
+  localStorage.setItem('bryansLockerData', JSON.stringify(lockerData));
+}
+
+function renderLockerTab() {
+  const tabsEl = document.getElementById('lockerHunterTabs');
+  const contentEl = document.getElementById('lockerContent');
+  if (!tabsEl || !contentEl) return;
+  const allHunters = hunters || DEFAULT_HUNTERS;
+  if (!lockerHunterView) lockerHunterView = allHunters[0];
+  tabsEl.innerHTML = allHunters.map(h =>
+    `<button class="locker-hunter-btn${h===lockerHunterView?' active':''}" onclick="setLockerHunter('${h}')">${h}</button>`
+  ).join('');
+  contentEl.innerHTML = buildLockerContent(lockerHunterView);
+}
+
+function setLockerHunter(name) {
+  lockerHunterView = name;
+  renderLockerTab();
+}
+
+function buildLockerContent(hunterName) {
+  const lk = getLockerForHunter(hunterName);
+  // Season stats from hunt history
+  const myHunts = huntsHistory.filter(h => h.hunter === hunterName);
+  const myHarvests = myHunts.filter(h => h.shot==='harvest');
+  const totalHours = myHunts.reduce((s,h) => s+(h.duration||0), 0);
+  const totalMiles = myHunts.reduce((s,h) => s+(h.distMiles||0), 0);
+
+  // Effective range from practice sessions
+  const mySessions = practiceSessions.filter(s => s.hunter === hunterName);
+  const effRange = calcEffectiveRange(mySessions);
+
+  const gearRows = lk.gear.length
+    ? lk.gear.map((g,i) => `<div class="locker-row"><div class="locker-row-label">${g.name}</div><div class="locker-row-val">${g.note||''}</div><button class="locker-add-btn" onclick="removeLockerGear('${hunterName}',${i})">✕</button></div>`).join('')
+    : '<div class="locker-row"><div class="locker-row-label" style="color:var(--text-dim);font-size:.65rem">No gear added yet</div></div>';
+
+  const weaponRows = lk.weapons.length
+    ? lk.weapons.map((w,i) => `<div class="locker-row"><div class="locker-row-label">${w.name}</div><div class="locker-row-val">${w.note||''}</div><button class="locker-add-btn" onclick="removeLockerWeapon('${hunterName}',${i})">✕</button></div>`).join('')
+    : '<div class="locker-row"><div class="locker-row-label" style="color:var(--text-dim);font-size:.65rem">No weapons added yet</div></div>';
+
+  return `
+  <div class="locker-section">
+    <div class="locker-section-head"><div class="locker-section-title">Season Stats</div></div>
+    <div class="locker-season-grid">
+      <div class="locker-stat"><div class="locker-stat-num">${myHunts.length}</div><div class="locker-stat-lbl">Hunts</div></div>
+      <div class="locker-stat"><div class="locker-stat-num">${myHarvests.length}</div><div class="locker-stat-lbl">Harvests</div></div>
+      <div class="locker-stat"><div class="locker-stat-num">${msToHMS(totalHours).slice(0,5)}</div><div class="locker-stat-lbl">Hrs in Field</div></div>
+      <div class="locker-stat"><div class="locker-stat-num">${totalMiles.toFixed(1)}</div><div class="locker-stat-lbl">Miles Walked</div></div>
+    </div>
+  </div>
+  <div class="locker-section">
+    <div class="locker-section-head">
+      <div class="locker-section-title">Weapons</div>
+      <button class="locker-add-btn" onclick="promptAddLockerWeapon('${hunterName}')">+ Add</button>
+    </div>
+    ${weaponRows}
+    ${effRange ? `<div class="locker-row"><div class="locker-row-label">Effective Range</div><div class="range-badge">${effRange} yds</div></div>` : ''}
+  </div>
+  <div class="locker-section">
+    <div class="locker-section-head">
+      <div class="locker-section-title">Gear</div>
+      <button class="locker-add-btn" onclick="promptAddLockerGear('${hunterName}')">+ Add</button>
+    </div>
+    ${gearRows}
+  </div>
+  ${myHunts.length ? `<div class="locker-section">
+    <div class="locker-section-head"><div class="locker-section-title">Hunt History</div></div>
+    ${myHunts.slice(0,8).map(h => {
+      const d = new Date(h.startTime||0);
+      return `<div class="past-hunt-item">
+        <div class="past-hunt-date">${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · ${msToHMS(h.duration||0).slice(0,5)}</div>
+        <div class="past-hunt-summary">${h.bucks||0} bucks · ${h.does||0} does${h.shot==='harvest'?' · 🎯 Harvest':''}${h.stand?' · '+h.stand:''}</div>
+      </div>`;
+    }).join('')}
+  </div>` : ''}
+  `;
+}
+
+function promptAddLockerGear(hunterName) {
+  const name = prompt('Gear / item name:');
+  if (!name) return;
+  const note = prompt('Note (brand, size, condition — optional):') || '';
+  getLockerForHunter(hunterName).gear.push({ name: name.trim(), note: note.trim() });
+  saveLockerData();
+  renderLockerTab();
+}
+
+function promptAddLockerWeapon(hunterName) {
+  const name = prompt('Weapon name (e.g. Ruger 7mm, Hoyt RX-7):');
+  if (!name) return;
+  const note = prompt('Note (scope, draw weight, ammo — optional):') || '';
+  getLockerForHunter(hunterName).weapons.push({ name: name.trim(), note: note.trim() });
+  saveLockerData();
+  renderLockerTab();
+}
+
+function removeLockerGear(hunterName, idx) {
+  getLockerForHunter(hunterName).gear.splice(idx, 1);
+  saveLockerData();
+  renderLockerTab();
+}
+
+function removeLockerWeapon(hunterName, idx) {
+  getLockerForHunter(hunterName).weapons.splice(idx, 1);
+  saveLockerData();
+  renderLockerTab();
+}
+
+// ============================================================
+// RANGE / TARGET PRACTICE
+// ============================================================
+function initRangeDate() {
+  const d = document.getElementById('rng-date');
+  if (d) d.value = new Date().toISOString().slice(0,10);
+}
+
+function calcEffectiveRange(sessions) {
+  if (!sessions.length) return null;
+  // Weighted average of sessions where accuracy >= 70%, capped by best consistent distance
+  const good = sessions.filter(s => s.acc >= 70);
+  if (!good.length) return null;
+  const maxDist = Math.max(...good.map(s => s.dist));
+  // Group size correction: 3" group at 100yds = hunting-accurate; scale accordingly
+  const best = good.reduce((b,s) => {
+    const score = s.acc * (s.dist/100) * (3 / Math.max(s.groupSize||3, 1));
+    return score > b.score ? { score, s } : b;
+  }, { score: -1, s: null });
+  if (!best.s) return maxDist;
+  const effRange = Math.min(Math.round(best.s.dist * (best.s.acc/100) * (3/Math.max(best.s.groupSize||3,1))), 600);
+  return effRange;
+}
+
+function getSkillLevel(effRange) {
+  if (!effRange) return ['?','Unknown'];
+  if (effRange < 50)  return ['1★','Beginner'];
+  if (effRange < 100) return ['2★','Developing'];
+  if (effRange < 200) return ['3★','Competent'];
+  if (effRange < 300) return ['4★','Proficient'];
+  return ['5★','Elite'];
+}
+
+function getStandRecommendation(effRange) {
+  if (!effRange) return '—';
+  if (effRange < 80)  return 'Box Blind';
+  if (effRange < 150) return 'Box Blind / Bryan Saddle';
+  if (effRange < 250) return 'Any Stand';
+  return 'Any Stand + Open Country';
+}
+
+function updateRangeCalc() {
+  const dist = parseFloat(document.getElementById('rng-dist').value)||0;
+  const acc  = parseFloat(document.getElementById('rng-acc').value)||0;
+  const grp  = parseFloat(document.getElementById('rng-group').value)||3;
+  if (!dist || !acc) { document.getElementById('rangeCalcDisplay').style.display='none'; return; }
+  const fakeSessions = [{ dist, acc, groupSize: grp }];
+  const eff = calcEffectiveRange(fakeSessions);
+  const [star, label] = getSkillLevel(eff);
+  const stand = getStandRecommendation(eff);
+  document.getElementById('effRangeNum').textContent = eff||'—';
+  document.getElementById('skillLevel').textContent = star;
+  document.getElementById('recStand').textContent = stand.split(' ')[0]+'…';
+  document.getElementById('rangeCalcDisplay').style.display='flex';
+  document.getElementById('rangeRecommendation').innerHTML = `
+    <div class="range-effective-display" style="flex-direction:column;gap:6px;padding:12px">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em">${label} · Recommended Stand</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:var(--text-bright)">${stand}</div>
+      ${eff && eff < dist ? `<div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--amber)">⚠ Best shots at ${eff}yds or closer based on your groups</div>` : ''}
+    </div>`;
+}
+
+function saveRangeSession() {
+  const weapon   = document.getElementById('rng-weapon').value;
+  const date     = document.getElementById('rng-date').value;
+  const dist     = parseFloat(document.getElementById('rng-dist').value);
+  const acc      = parseFloat(document.getElementById('rng-acc').value);
+  const groupSize= parseFloat(document.getElementById('rng-group').value)||null;
+  const shots    = parseInt(document.getElementById('rng-shots').value)||null;
+  const notes    = document.getElementById('rng-notes').value.trim();
+  if (!dist || !acc) { alert('Enter distance and accuracy to save.'); return; }
+  const session = { id: Date.now(), hunter: currentHunter, weapon, date, dist, acc, groupSize, shots, notes };
+  practiceSessions.unshift(session);
+  localStorage.setItem('bryansRangeSessions', JSON.stringify(practiceSessions.slice(0,200)));
+  // Reset form fields
+  ['rng-dist','rng-acc','rng-group','rng-shots','rng-notes'].forEach(id => { document.getElementById(id).value=''; });
+  document.getElementById('rangeCalcDisplay').style.display='none';
+  document.getElementById('rangeRecommendation').innerHTML='';
+  renderRangeTab();
+  renderLockerTab();
+}
+
+function renderRangeTab() {
+  const el = document.getElementById('rangePracticeLog');
+  if (!el) return;
+  const mySessions = practiceSessions.filter(s => !currentHunter || s.hunter===currentHunter);
+  if (!mySessions.length) {
+    el.innerHTML = '<div class="empty-state"><span class="e-icon">🎯</span>No sessions yet — log your first practice above.</div>';
+    return;
+  }
+  const effRange = calcEffectiveRange(mySessions);
+  const [star, label] = getSkillLevel(effRange);
+  el.innerHTML = `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;gap:16px;align-items:center">
+      <div style="text-align:center;flex:1"><div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--amber);line-height:1">${effRange||'—'}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em">Effective Range (yds)</div></div>
+      <div style="text-align:center;flex:1"><div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--hunt);line-height:1">${star}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em">${label}</div></div>
+      <div style="text-align:center;flex:1"><div style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--text-bright);line-height:1.2">${getStandRecommendation(effRange).split(' / ')[0]}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em">Best Stand</div></div>
+    </div>
+  ` + mySessions.map(s => `
+    <div class="practice-log-item">
+      <span class="practice-weapon-badge ${s.weapon==='bow'?'bow':'rifle'}">${s.weapon.toUpperCase()}</span>
+      <div>
+        <div class="practice-dist">${s.dist}yds</div>
+        <div class="practice-acc">${s.acc}% on target${s.groupSize?` · ${s.groupSize}″ groups`:''}</div>
+      </div>
+      <div class="practice-date">${s.date||''}</div>
+    </div>`).join('');
+}
+
+function viewPastHunt(id) {
+  const h = huntsHistory.find(x => x.id===id);
+  if (!h) return;
+  const d = new Date(h.startTime||0);
+  alert(`Hunt: ${d.toLocaleDateString()} · ${msToHMS(h.duration||0)}\n${h.distMiles||0}mi · ${h.bucks||0} bucks · ${h.does||0} does${h.shot==='harvest'?'\n🎯 Harvest':''}\n${h.notes||''}`);
+}
 </script>
 </body>
 </html>
