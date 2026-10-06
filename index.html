@@ -105,7 +105,7 @@ header {
   box-shadow: 0 2px 8px rgba(44,30,14,.10);
 }
 .header-badge {
-  width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 44px; height: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .header-text h1 {
   font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700;
@@ -656,38 +656,53 @@ header {
  -->
 <header>
   <div class="header-badge">
-    <!-- 12-point buck antler rack -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 72" width="44" height="40" fill="none">
-      <!-- LEFT ANTLER -->
-      <!-- main beam left -->
-      <path d="M40 60 C38 52 34 44 28 36 C22 28 14 22 10 14" stroke="#c05c10" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <!-- brow tine left -->
-      <path d="M34 46 C30 42 24 40 18 40" stroke="#c05c10" stroke-width="2.4" stroke-linecap="round" fill="none"/>
-      <!-- bez tine left -->
-      <path d="M28 36 C24 32 20 26 18 20" stroke="#c05c10" stroke-width="2.4" stroke-linecap="round" fill="none"/>
-      <!-- trez tine left -->
-      <path d="M20 26 C16 24 10 24 6 22" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <!-- top fork left (G3) -->
-      <path d="M14 18 C10 14 8 8 6 4" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <!-- top fork left (G4) -->
-      <path d="M12 16 C16 10 18 6 20 2" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <!-- Whitetail deer head + rack silhouette, styled after classic scoring illustration -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110" width="40" height="44">
+      <!-- === LEFT ANTLER === -->
+      <!-- main beam L: rises from skull, sweeps out-left and up -->
+      <path d="M43 52 C40 44 36 36 30 27 C24 18 16 12 10 6" stroke="#c05c10" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <!-- brow tine L (G1): forward from low beam -->
+      <path d="M38 46 C34 43 28 42 22 43" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <!-- G2: up from mid beam -->
+      <path d="M30 30 C27 24 25 17 24 10" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <!-- G3: cluster near top -->
+      <path d="M20 16 C17 11 15 5 14 2" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <!-- G4: adjacent to G3 -->
+      <path d="M16 14 C19 9 21 4 22 1" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <!-- G5: tip fork -->
+      <path d="M12 10 C10 6 11 2 13 0" stroke="#c05c10" stroke-width="1.6" stroke-linecap="round" fill="none"/>
 
-      <!-- RIGHT ANTLER (mirrored) -->
-      <!-- main beam right -->
-      <path d="M40 60 C42 52 46 44 52 36 C58 28 66 22 70 14" stroke="#c05c10" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <!-- brow tine right -->
-      <path d="M46 46 C50 42 56 40 62 40" stroke="#c05c10" stroke-width="2.4" stroke-linecap="round" fill="none"/>
-      <!-- bez tine right -->
-      <path d="M52 36 C56 32 60 26 62 20" stroke="#c05c10" stroke-width="2.4" stroke-linecap="round" fill="none"/>
-      <!-- trez tine right -->
-      <path d="M60 26 C64 24 70 24 74 22" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <!-- top fork right (G3) -->
-      <path d="M66 18 C70 14 72 8 74 4" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <!-- top fork right (G4) -->
-      <path d="M68 16 C64 10 62 6 60 2" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <!-- === RIGHT ANTLER (mirror) === -->
+      <!-- main beam R -->
+      <path d="M57 52 C60 44 64 36 70 27 C76 18 84 12 90 6" stroke="#c05c10" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <!-- brow tine R (G1) -->
+      <path d="M62 46 C66 43 72 42 78 43" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <!-- G2 R -->
+      <path d="M70 30 C73 24 75 17 76 10" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <!-- G3 R -->
+      <path d="M80 16 C83 11 85 5 86 2" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <!-- G4 R -->
+      <path d="M84 14 C81 9 79 4 78 1" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <!-- G5 R tip -->
+      <path d="M88 10 C90 6 89 2 87 0" stroke="#c05c10" stroke-width="1.6" stroke-linecap="round" fill="none"/>
 
-      <!-- skull/burr base -->
-      <ellipse cx="40" cy="62" rx="6" ry="4" fill="#c05c10" opacity="0.5"/>
+      <!-- === DEER HEAD === -->
+      <!-- skull/pedestal where antlers meet head -->
+      <ellipse cx="50" cy="55" rx="7" ry="4" fill="#c05c10" opacity="0.35"/>
+      <!-- head shape: rounded oval, slightly tapered toward muzzle -->
+      <ellipse cx="50" cy="76" rx="16" ry="19" fill="none" stroke="#c05c10" stroke-width="2"/>
+      <!-- muzzle bump at bottom -->
+      <path d="M42 92 Q50 100 58 92" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <!-- nose -->
+      <ellipse cx="50" cy="95" rx="5" ry="3" fill="none" stroke="#c05c10" stroke-width="1.6"/>
+      <!-- left eye -->
+      <circle cx="42" cy="72" r="2.5" fill="none" stroke="#c05c10" stroke-width="1.6"/>
+      <!-- right eye -->
+      <circle cx="58" cy="72" r="2.5" fill="none" stroke="#c05c10" stroke-width="1.6"/>
+      <!-- left ear -->
+      <path d="M34 66 C28 60 27 52 31 50 C35 48 38 54 36 62 Z" fill="none" stroke="#c05c10" stroke-width="2" stroke-linejoin="round"/>
+      <!-- right ear -->
+      <path d="M66 66 C72 60 73 52 69 50 C65 48 62 54 64 62 Z" fill="none" stroke="#c05c10" stroke-width="2" stroke-linejoin="round"/>
     </svg>
   </div>
   <div class="header-text">
