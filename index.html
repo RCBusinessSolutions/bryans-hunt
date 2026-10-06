@@ -1156,13 +1156,19 @@ function processWeatherData(data) {
       precip: daily.precipitation_sum[d] || 0,
       precipProbability: precips.filter(p=>p>0).length * 4, // rough %
       humidity: hourly.relativehumidity_2m ? Math.round(avg(hourly.relativehumidity_2m.slice(dayStart,dayStart+24))) : 60,
+      sunriseISO: daily.sunrise[d] || null,
+      sunsetISO:  daily.sunset[d]  || null,
       sunrise: daily.sunrise[d] ? new Date(daily.sunrise[d]).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) : '--',
       sunset:  daily.sunset[d]  ? new Date(daily.sunset[d]).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}) : '--',
+      shootStart: daily.sunrise[d] ? (() => { const t = new Date(daily.sunrise[d]); t.setMinutes(t.getMinutes()-30); return t.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); })() : '--',
+      shootEnd:   daily.sunset[d]  ? (() => { const t = new Date(daily.sunset[d]);  t.setMinutes(t.getMinutes()+30); return t.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); })() : '--',
     });
   }
 
   buildWeekStrip();
   renderForecastDay(0);
+  // Schedule shooting light notifications if already permitted
+  if (Notification.permission === 'granted') scheduleShootingLightNotifications();
 }
 
 // 
@@ -1294,10 +1300,12 @@ function renderForecastDay(idx) {
       </div>
     </div>
 
-    <!-- Sunrise/Sunset -->
+    <!-- Sunrise/Sunset + Shooting Light -->
     <div class="sunrise-row">
+      <div class="sunrise-item"><span>Shoot Light</span> <strong>${day.shootStart}</strong></div>
       <div class="sunrise-item"><span>Sunrise</span> <strong>${day.sunrise}</strong></div>
       <div class="sunrise-item"><span>Sunset</span> <strong>${day.sunset}</strong></div>
+      <div class="sunrise-item"><span>Dark</span> <strong>${day.shootEnd}</strong></div>
     </div>
 
     <!-- Solunar -->
@@ -1385,6 +1393,41 @@ function checkAndNotify() {
       body: `Score ${tomorrow.score}/99 — ${tomorrow.verdict}. Conditions look prime.`,
       icon: null
     });
+  }
+  scheduleShootingLightNotifications();
+}
+
+function scheduleShootingLightNotifications() {
+  if (Notification.permission !== 'granted' || !weatherData || !weatherData[0]) return;
+  const d = weatherData[0];
+  if (!d.sunriseISO || !d.sunsetISO) return;
+
+  const now = Date.now();
+
+  // Shooting light START = sunrise - 30 min
+  const shootStart = new Date(d.sunriseISO);
+  shootStart.setMinutes(shootStart.getMinutes() - 30);
+  const msToStart = shootStart.getTime() - now;
+  if (msToStart > 0 && msToStart < 24 * 60 * 60 * 1000) {
+    setTimeout(() => {
+      new Notification("Shooting Light Begins", {
+        body: `Legal shooting hours started at ${d.shootStart}. 30 min before sunrise — get on stand!`,
+        tag: 'shoot-start'
+      });
+    }, msToStart);
+  }
+
+  // Shooting light END = sunset + 30 min
+  const shootEnd = new Date(d.sunsetISO);
+  shootEnd.setMinutes(shootEnd.getMinutes() + 30);
+  const msToEnd = shootEnd.getTime() - now;
+  if (msToEnd > 0 && msToEnd < 24 * 60 * 60 * 1000) {
+    setTimeout(() => {
+      new Notification("Shooting Light Ends", {
+        body: `Legal shooting hours ended at ${d.shootEnd}. Time to pack out.`,
+        tag: 'shoot-end'
+      });
+    }, msToEnd);
   }
 }
 
