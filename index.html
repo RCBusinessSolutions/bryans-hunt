@@ -793,61 +793,71 @@ header {
  -->
 <header>
   <div class="header-badge">
-    <!-- Original whitetail buck outline, based on face-on 3/4 angle reference -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 132" width="42" height="48">
-      <!-- LEFT ANTLER — main beam sweeps wide out-left then up -->
-      <path d="M46 50 C42 43 36 34 27 24 C19 15 10 8 3 2" stroke="#c05c10" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-      <!-- G1 brow tine: forward/up from lower beam -->
-      <path d="M40 46 C33 41 25 39 16 42" stroke="#c05c10" stroke-width="2.1" stroke-linecap="round" fill="none"/>
-      <!-- G2: long tine up from mid beam -->
-      <path d="M26 28 C23 20 21 12 19 4" stroke="#c05c10" stroke-width="1.9" stroke-linecap="round" fill="none"/>
-      <!-- G3 tine near upper beam -->
-      <path d="M13 16 C10 9 8 4 7 0" stroke="#c05c10" stroke-width="1.7" stroke-linecap="round" fill="none"/>
-      <!-- G4 / tip fork left branch -->
-      <path d="M7 10 C4 6 3 2 4 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-      <!-- G5 / tip fork right branch -->
-      <path d="M10 8 C13 4 14 1 12 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Original deer skull / European mount outline in orange -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 118" width="44" height="52">
+      <!-- LEFT ANTLER — main beam sweeps wide up-left -->
+      <path d="M44 48 C40 40 33 30 22 18 C14 9 7 4 2 1" stroke="#c05c10" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+      <!-- G1 brow tine L (forward) -->
+      <path d="M36 40 C28 34 20 32 12 35" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <!-- G2 L (tall, upward) -->
+      <path d="M23 24 C19 16 17 8 18 2" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <!-- G3 L -->
+      <path d="M10 13 C7 7 7 2 9 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <!-- Tip fork L -->
+      <path d="M5 7 C3 3 4 0 6 0" stroke="#c05c10" stroke-width="1.3" stroke-linecap="round" fill="none"/>
 
-      <!-- RIGHT ANTLER — mirror, sweeps wide out-right -->
-      <path d="M74 50 C78 43 84 34 93 24 C101 15 110 8 117 2" stroke="#c05c10" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+      <!-- RIGHT ANTLER — mirror -->
+      <path d="M76 48 C80 40 87 30 98 18 C106 9 113 4 118 1" stroke="#c05c10" stroke-width="2.6" stroke-linecap="round" fill="none"/>
       <!-- G1 R -->
-      <path d="M80 46 C87 41 95 39 104 42" stroke="#c05c10" stroke-width="2.1" stroke-linecap="round" fill="none"/>
+      <path d="M84 40 C92 34 100 32 108 35" stroke="#c05c10" stroke-width="2" stroke-linecap="round" fill="none"/>
       <!-- G2 R -->
-      <path d="M94 28 C97 20 99 12 101 4" stroke="#c05c10" stroke-width="1.9" stroke-linecap="round" fill="none"/>
+      <path d="M97 24 C101 16 103 8 102 2" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
       <!-- G3 R -->
-      <path d="M107 16 C110 9 112 4 113 0" stroke="#c05c10" stroke-width="1.7" stroke-linecap="round" fill="none"/>
-      <!-- G4 R left branch -->
-      <path d="M113 10 C116 6 117 2 116 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-      <!-- G5 R right branch -->
-      <path d="M110 8 C107 4 106 1 108 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <path d="M110 13 C113 7 113 2 111 0" stroke="#c05c10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <!-- Tip fork R -->
+      <path d="M115 7 C117 3 116 0 114 0" stroke="#c05c10" stroke-width="1.3" stroke-linecap="round" fill="none"/>
 
-      <!-- PEDICLE RIDGE — skull top where antlers root -->
-      <path d="M42 54 Q46 51 50 51 Q60 51 74 54" stroke="#c05c10" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+      <!-- PEDICLES — where antlers root into skull (ringed bases) -->
+      <ellipse cx="44" cy="49" rx="6" ry="4" fill="none" stroke="#c05c10" stroke-width="1.6"/>
+      <ellipse cx="76" cy="49" rx="6" ry="4" fill="none" stroke="#c05c10" stroke-width="1.6"/>
 
-      <!-- HEAD OUTLINE — rounded face, wide at brow, tapers to blocky chin -->
-      <path d="M38 62 C34 66 32 76 33 86 C35 97 42 106 60 110 C78 106 85 97 87 86 C88 76 86 66 82 62 C78 56 64 53 60 53 C56 53 42 56 38 62 Z" stroke="#c05c10" stroke-width="2.2" fill="none"/>
+      <!-- CRANIUM DOME — rounded skull cap -->
+      <path d="M26 54 C27 40 38 32 60 30 C82 32 93 40 94 54" stroke="#c05c10" stroke-width="2.2" fill="none"/>
+      <!-- Skull side walls -->
+      <path d="M26 54 C24 60 24 68 27 76" stroke="#c05c10" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M94 54 C96 60 96 68 93 76" stroke="#c05c10" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Temporal / sagittal ridge hint -->
+      <path d="M44 32 C52 30 60 30 68 30 C74 30 80 31 76 32" stroke="#c05c10" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.5"/>
 
-      <!-- LEFT EAR — large flap, extends wide left -->
-      <path d="M38 68 C29 62 24 52 28 46 C32 42 40 48 40 60 Z" stroke="#c05c10" stroke-width="2" fill="none" stroke-linejoin="round"/>
-      <!-- RIGHT EAR -->
-      <path d="M82 68 C91 62 96 52 92 46 C88 42 80 48 80 60 Z" stroke="#c05c10" stroke-width="2" fill="none" stroke-linejoin="round"/>
+      <!-- BROW RIDGES above eye sockets -->
+      <path d="M28 60 C34 56 40 55 46 57" stroke="#c05c10" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <path d="M92 60 C86 56 80 55 74 57" stroke="#c05c10" stroke-width="1.4" fill="none" stroke-linecap="round"/>
 
-      <!-- LEFT EYE -->
-      <circle cx="48" cy="74" r="3" fill="none" stroke="#c05c10" stroke-width="1.6"/>
-      <!-- RIGHT EYE -->
-      <circle cx="72" cy="74" r="3" fill="none" stroke="#c05c10" stroke-width="1.6"/>
+      <!-- EYE SOCKETS — large almond ovals -->
+      <ellipse cx="40" cy="67" rx="12" ry="9" fill="none" stroke="#c05c10" stroke-width="1.9"/>
+      <ellipse cx="80" cy="67" rx="12" ry="9" fill="none" stroke="#c05c10" stroke-width="1.9"/>
 
-      <!-- FACE PLANE — subtle brow ridge line -->
-      <path d="M44 66 C50 64 70 64 76 66" stroke="#c05c10" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <!-- NASAL BONES — bridge between eyes tapering down -->
+      <path d="M52 63 C54 70 54 78 52 86" stroke="#c05c10" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+      <path d="M68 63 C66 70 66 78 68 86" stroke="#c05c10" stroke-width="1.3" fill="none" stroke-linecap="round"/>
 
-      <!-- MUZZLE / WHITE PATCH outline -->
-      <ellipse cx="60" cy="97" rx="11" ry="9" fill="none" stroke="#c05c10" stroke-width="1.6"/>
-      <!-- NOSE PAD -->
-      <ellipse cx="60" cy="101" rx="6.5" ry="4.5" fill="none" stroke="#c05c10" stroke-width="1.9"/>
+      <!-- NASAL CAVITY OPENING — pear / arch shape -->
+      <path d="M52 84 C50 90 52 98 60 100 C68 98 70 90 68 84 C66 78 54 78 52 84 Z" stroke="#c05c10" stroke-width="1.8" fill="none"/>
 
-      <!-- NECK — thick, visible below chin -->
-      <path d="M46 112 C43 120 42 127 44 132" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <path d="M74 112 C77 120 78 127 76 132" stroke="#c05c10" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <!-- ZYGOMATIC ARCHES — cheekbones flaring out -->
+      <path d="M27 76 C30 82 38 88 48 90" stroke="#c05c10" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <path d="M93 76 C90 82 82 88 72 90" stroke="#c05c10" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+
+      <!-- PREMAXILLA / JAW OUTLINE -->
+      <path d="M48 90 C50 96 54 102 60 104 C66 102 70 96 72 90" stroke="#c05c10" stroke-width="1.8" fill="none"/>
+      <path d="M50 94 C52 100 56 106 60 108 C64 106 68 100 70 94" stroke="#c05c10" stroke-width="1.4" fill="none"/>
+
+      <!-- INCISORS / TEETH — vertical dividers -->
+      <line x1="54" y1="96" x2="54" y2="105" stroke="#c05c10" stroke-width="1.2"/>
+      <line x1="57" y1="97" x2="57" y2="107" stroke="#c05c10" stroke-width="1.2"/>
+      <line x1="60" y1="97" x2="60" y2="108" stroke="#c05c10" stroke-width="1.2"/>
+      <line x1="63" y1="97" x2="63" y2="107" stroke="#c05c10" stroke-width="1.2"/>
+      <line x1="66" y1="96" x2="66" y2="105" stroke="#c05c10" stroke-width="1.2"/>
     </svg>
   </div>
   <div class="header-text">
