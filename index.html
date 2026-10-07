@@ -1204,9 +1204,13 @@ function moonSVG(age, size=42) {
   </svg>`;
 }
 
+// AM hunting window: 6:00am–10:00am
+const AM_HUNT_START = 6 * 60;   // minutes from midnight
+const AM_HUNT_END   = 10 * 60;
+
 function solunarPeriods(date, sunrise, sunset) {
   const age = moonAge(date);
-  const cycle = 24 * 60; // minutes
+  const cycle = 24 * 60;
   const transitOffset = (age / 29.53) * cycle;
   const moonTransit = (12 * 60 + transitOffset) % cycle;
   const moonUnderfoot = (moonTransit + 12 * 60) % cycle;
@@ -1218,17 +1222,53 @@ function solunarPeriods(date, sunrise, sunset) {
     return `${(h%12||12)}:${m.toString().padStart(2,'0')} ${ampm}`;
   }
 
-  const periods = [];
+  // Parse "7:02 AM" style string → minutes from midnight
+  function parseTime(str) {
+    if (!str || str === '--') return null;
+    const m = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!m) return null;
+    let h = parseInt(m[1]); const min = parseInt(m[2]);
+    if (m[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+    if (m[3].toUpperCase() === 'AM' && h === 12) h = 0;
+    return h * 60 + min;
+  }
+
+  const sunriseMins = parseTime(sunrise);
+
+  const allPeriods = [];
   [moonTransit, moonUnderfoot].forEach(t => {
-    const start = (t - 60 + cycle) % cycle;
-    const end   = (t + 60) % cycle;
-    periods.push({ type:'major', label:'Major', start: fmt(start), end: fmt(end), peak: fmt(t) });
-    // minor at 90° offset
+    allPeriods.push({ type:'major', label:'Major', peakMins: t, peak: fmt(t) });
     const m1 = (t + 6*60) % cycle;
-    const m2 = (t - 6*60 + cycle) % cycle;
-    periods.push({ type:'minor', label:'Minor', start: fmt((m1-30+cycle)%cycle), end: fmt((m1+30)%cycle), peak: fmt(m1) });
+    allPeriods.push({ type:'minor', label:'Minor', peakMins: m1, peak: fmt(m1) });
   });
-  return periods.slice(0,4);
+
+  // Filter to AM hunting window only (6am–10am)
+  const inWindow = allPeriods.filter(p => p.peakMins >= AM_HUNT_START && p.peakMins <= AM_HUNT_END);
+
+  // Tag crepuscular bonus: within 45 min of sunrise
+  inWindow.forEach(p => {
+    if (sunriseMins !== null && Math.abs(p.peakMins - sunriseMins) <= 45) {
+      p.crepuscular = true;
+      p.label = p.type === 'major' ? '★ Prime Major' : '★ Prime Minor';
+    }
+  });
+
+  // Sort by time
+  inWindow.sort((a,b) => a.peakMins - b.peakMins);
+
+  return inWindow;
+}
+
+// Crepuscular bonus: score periods near civil twilight higher
+function solunarWindowScore(date, sunrise) {
+  const sol = solunarPeriods(date, sunrise, '7:30 PM');
+  if (!sol.length) return 40; // nothing in window
+  const hasMajor = sol.some(s => s.type === 'major');
+  const hasPrime = sol.some(s => s.crepuscular);
+  if (hasPrime && hasMajor) return 100;
+  if (hasPrime) return 88;
+  if (hasMajor) return 75;
+  return 58; // minor only in window
 }
 
 // 
@@ -1269,7 +1309,7 @@ function windDir(degrees) {
 }
 
 function scoreHuntDay(weather, dayIdx) {
-  const { temp, wind, windDir: wDir, pressure, precip, pressurePrev } = weather;
+  const { temp, wind, windDir: wDir, pressure, precip, pressurePrev, sunrise } = weather;
   const date = new Date();
   date.setDate(date.getDate() + dayIdx);
   const moonAge_ = moonAge(date);
@@ -1315,9 +1355,8 @@ function scoreHuntDay(weather, dayIdx) {
   else if (precip < 0.25) prScore = 50;
   else prScore = 15;
 
-  // Solunar score
-  const sol = solunarPeriods(date, '6:00 AM', '6:30 PM');
-  const solScore = sol.length >= 2 ? 75 : 55;
+  // Solunar score — crepuscular-weighted, AM window only (6am–10am)
+  const solScore = solunarWindowScore(date, weather.sunrise || sunrise || '6:30 AM');
 
   // Moon score
   const mScore = moonPhaseScore(moonAge_);
@@ -1543,11 +1582,19 @@ function renderForecastDay(idx) {
       <div class="sunrise-item"><span>Dark</span> <strong>${day.shootEnd}</strong></div>
     </div>
 
-    <!-- Solunar -->
+    <!-- AM session header -->
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text-dim);padding:6px 14px 2px;letter-spacing:.04em;">
+      AM SESSION 6:00–10:00 · Sunrise ${day.sunrise} · In stand by ${day.shootStart}
+    </div>
+
+    <!-- Solunar — AM window only -->
     <div class="solunar-row">
-      <div class="solunar-lbl">Solunar Periods</div>
+      <div class="solunar-lbl">Solunar in Window</div>
       <div class="solunar-periods">
-        ${sol.map(s => `<span class="solunar-chip ${s.type}">${s.label}: ${s.peak}</span>`).join('')}
+        ${sol.length
+          ? sol.map(s => `<span class="solunar-chip ${s.type}${s.crepuscular?' prime':''}" style="${s.crepuscular?'background:var(--amber);color:#fff;border-color:var(--amber)':''}">${s.label}: ${s.peak}</span>`).join('')
+          : '<span style="font-family:\'JetBrains Mono\',monospace;font-size:.65rem;color:var(--text-dim)">No major/minor periods 6am–10am</span>'
+        }
       </div>
     </div>
 
