@@ -1297,14 +1297,14 @@ function scoreHuntDay(weather, dayIdx) {
   else if (temp < 35) tScore = 70; // cold snap
   else tScore = 50;
 
-  // Wind score
+  // Wind score — early season deer are less wind-sensitive
   let wScore;
-  if (wind >= 4 && wind <= 10) wScore = 100;
-  else if (wind < 4) wScore = 60;
-  else if (wind <= 15) wScore = 75;
-  else if (wind <= 20) wScore = 40;
-  else if (wind <= 25) wScore = 15;
-  else wScore = 0;
+  if (wind >= 4 && wind <= 12) wScore = 100;
+  else if (wind < 4) wScore = 70;
+  else if (wind <= 18) wScore = 85;
+  else if (wind <= 25) wScore = 60;
+  else if (wind <= 30) wScore = 30;
+  else wScore = 5;
 
   // Precip score
   let prScore;
