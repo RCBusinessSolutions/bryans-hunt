@@ -2443,8 +2443,9 @@ function savePostHuntReview() {
 // ============================================================
 // HUNTER LOCKER
 // ============================================================
-let lockerHunterView = null;
-let lockerData = (() => { try { return JSON.parse(localStorage.getItem('bryansLockerData')||'{}'); } catch(e){ return {}; } })();
+// Declared at top level so renderLockerTab() can be called any time
+var lockerHunterView = null;
+var lockerData = (() => { try { return JSON.parse(localStorage.getItem('bryansLockerData')||'{}'); } catch(e){ return {}; } })();
 
 function getLockerForHunter(name) {
   if (!lockerData[name]) lockerData[name] = { gear:[], weapons:[], harvests:[] };
