@@ -2173,10 +2173,9 @@ function init() {
   renderHuntLog();
   renderCamLog();
   fetchWeather();
-  renderLockerTab();
-  renderRangeTab();
   renderHuntTab();
   initRangeDate();
+  // Locker and Range render on tab switch — skip here to avoid init order issues
 }
 
 init();
